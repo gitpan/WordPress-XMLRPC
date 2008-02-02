@@ -1,0 +1,52 @@
+WordPress::XMLRPC
+
+$Revision: 1.1.1.1 $
+
+
+TESTING
+=======
+
+
+To test fully, you need to set up a ./t/wppost YAML
+
+
+t/wppost
+--------
+
+This is a YAML file,  file should contain:
+
+   ---
+   U:username
+   P:password
+   p:proxy
+
+Example t/wppost file:
+
+   ---
+   U: jim
+   P: wegjwgw
+   p: 'http://jim/xmlrpc.php'
+
+When you run this on a proxy for a wordpress blog with content, 
+you're gonna get all kinds of output. 
+The calls do not provide arguments, so some calls will fail.
+
+I suggest you pipe the output (STDERR) to a file.
+
+   perl t/10_XMLRPC.t 2> t/out
+
+Then you can open the file with vim and inspect the output.
+This may be useful to get acquainted with what's going on on the inside.
+
+Example output is in t/10_XMLRPC.out
+
+INSTALLATION
+============
+
+perl Makefile.PL
+make test
+make install
+
+
+
+

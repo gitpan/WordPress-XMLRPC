@@ -1,0 +1,15 @@
+t/analize_xmlrpc.pl
+t/04_XMLRPC_post.t
+t/02_XMLRPC.t
+t/00_basic.t
+t/10_XMLRPC.out
+t/10_XMLRPC.t.optional
+t/xmlrpc.php
+t/test.pl
+t/04_XMLRPC_page.t
+MANIFEST
+lib/WordPress/XMLRPC.pm
+Makefile.PL
+README
+
+META.yml                                 Module meta-data (added by MakeMaker)
