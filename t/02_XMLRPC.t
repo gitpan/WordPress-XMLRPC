@@ -10,7 +10,7 @@ ok(1,'starting test.');
 
 
 if( ! -f './t/wppost' ){
-   ok(1, usage());
+   ok(1, 'see README for further testing, skipped.');
    exit;
 }
 

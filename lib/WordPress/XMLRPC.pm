@@ -3,7 +3,8 @@ use warnings;
 use strict;
 use Carp;
 use vars qw($VERSION);
-$VERSION = sprintf "%d.%02d", q$Revision: 1.2 $ =~ /(\d+)/g;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.4 $ =~ /(\d+)/g;
+
 
 
 sub new {
