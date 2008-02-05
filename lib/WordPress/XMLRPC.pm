@@ -3,7 +3,7 @@ use warnings;
 use strict;
 use Carp;
 use vars qw($VERSION);
-$VERSION = sprintf "%d.%02d", q$Revision: 1.4 $ =~ /(\d+)/g;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.5 $ =~ /(\d+)/g;
 
 
 
@@ -548,6 +548,8 @@ sub newMediaObject {
 	my $call = $self->server->call(
 		'metaWeblog.newMediaObject',
 		$blog_id,
+      $self->username,
+      $self->password,
 		$data,
 	);
 
