@@ -3,7 +3,7 @@ use warnings;
 use strict;
 use Carp;
 use vars qw($VERSION);
-$VERSION = sprintf "%d.%02d", q$Revision: 1.6 $ =~ /(\d+)/g;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.9 $ =~ /(\d+)/g;
 
 sub new {
    my ($class,$self) = @_;
@@ -18,6 +18,8 @@ sub proxy {
    if( defined $val ){
       $self->{proxy} = $val;      
    }
+	defined $self->{proxy} or carp("missing 'proxy'".  (caller(1))[3]);
+
    return $self->{proxy};
 }
 
@@ -27,6 +29,8 @@ sub username {
    if( defined $val ){
       $self->{username} = $val;      
    }
+	defined $self->{username} or carp("missing 'username'".  (caller(1))[3]);
+
    return $self->{username};
 }
 
@@ -36,6 +40,8 @@ sub password {
    if( defined $val ){
       $self->{password} = $val;      
    }
+	defined $self->{password} or carp("missing 'username'". (caller(1))[3]);
+
    return $self->{password};
 }
 
@@ -62,7 +68,7 @@ sub publish {
 sub server {
    my $self = shift;
    unless( $self->{server} ){
-      $self->proxy or croak('missing proxy');
+      $self->proxy or confess('missing proxy');
       require XMLRPC::Lite;
 
       $self->{server} ||= XMLRPC::Lite->proxy( $self->proxy );
@@ -89,13 +95,21 @@ sub _call_has_fault {
    defined $call or confess('no call passed');
    my $err = $call->fault or return 0;
    
-   my $_err;
-   for( keys %$err ){
+   #my $from = caller();   
+   #my($package, $filename, $line, $subroutine, $hasargs,
+   #   $wantarray, $evaltext, $is_require, $hints, $bitmask) = caller(1);
       
-      $_err.="ERROR:$_ $$err{$_}\n";
+
+   my $_err;
+   for my $k( keys %$err ){
+      
+      $_err.= sprintf "# %s() - ERROR %s, %s\n", 
+         (caller(1))[3], # sub name
+         $k, # error label, from XMLRPC::Simple call
+         $err->{$k}, # error text                  
+         ;
    }
    $self->errstr($_err);
-
    
    return $self->errstr;
 }
@@ -122,6 +136,8 @@ sub getPage {
 	my $username = $self->username;
 	my $password = $self->password;
 
+	$page_id or confess('missing page id');  
+
 	my $call = $self->server->call(
 		'wp.getPage',
 		$blog_id,
@@ -147,6 +163,7 @@ sub getPages {
 	my $blog_id = $self->blog_id;
 	my $username = $self->username;
 	my $password = $self->password;
+	
 
 	my $call = $self->server->call(
 		'wp.getPages',
@@ -169,18 +186,26 @@ sub getPages {
 # xmlrpc.php: function wp_newPage
 sub newPage {
 	my $self = shift;
+   my $blog_id = $self->blog_id;
+   my $username = $self->username;
+   my $password = $self->password;   
 	my $page = shift;
-   defined $page or croak('missing page hash ref arg');
+
+	defined $page or confess('missing page arg');
+      
+   
 	my $publish = shift;
 	unless (defined $publish) {
 		$publish = $self->publish;
 	}
 
+   
+
 	my $call = $self->server->call(
 		'wp.newPage',
-      $self->blog_id, # ignored
-      $self->username, # i had missed these!!!
-      $self->password,
+      $blog_id, # ignored
+      $username, # i had missed these!!!
+      $password,
 		$page,
 		$publish,
 	);
@@ -199,12 +224,13 @@ sub newPage {
 # xmlrpc.php: function wp_deletePage
 sub deletePage {
 	my $self = shift;
-	my $blog_id = $self->blog_id;
-  
+	my $blog_id = $self->blog_id;  
 	my $username = $self->username;
 	my $password = $self->password;
 	my $page_id = shift;
-   defined $page_id or croak('missing page id arg');
+
+	defined $page_id or confess('missing page id arg');
+   
 
 	my $call = $self->server->call(
 		'wp.deletePage',
@@ -232,18 +258,24 @@ sub editPage {
    my $page_id = shift;
 	my $content = shift;
 	my $publish = shift;
+   my $password = $self->password;
+   my $username = $self->username;
+
+	defined $page_id or confess('missing page id arg');
+	defined $content or confess('missing content hash ref arg');
+   
 	unless (defined $publish) {
 		$publish = $self->publish;
 	}
-   defined $page_id or croak('missing page id arg');
-   defined $content or croak('missing page content hash ref arg');
+   
+
 
 	my $call = $self->server->call(
 		'wp.editPage',
 		$blog_id,
       $page_id,
-      $self->username,
-      $self->password,
+      $username,
+      $password,
 		$content,
 		$publish,
 	);
@@ -265,6 +297,7 @@ sub getPageList {
 	my $blog_id = $self->blog_id;
 	my $username = $self->username;
 	my $password = $self->password;
+
 
 	my $call = $self->server->call(
 		'wp.getPageList',
@@ -290,6 +323,7 @@ sub getAuthors {
 	my $blog_id = $self->blog_id;
 	my $username = $self->username;
 	my $password = $self->password;
+
 
 	my $call = $self->server->call(
 		'wp.getAuthors',
@@ -318,7 +352,8 @@ sub newCategory {
 	my $password = $self->password;
 	my $category = shift;
 
-   defined $category or croak('missing category string arg');
+	defined $category or confess('missing category string');
+
 	my $call = $self->server->call(
 		'wp.newCategory',
 		$blog_id,
@@ -345,7 +380,9 @@ sub suggestCategories {
 	my $username = $self->username;
 	my $password = $self->password;
 	my $category = shift;
-	my $max_results = shift;
+	my $max_results = shift; # optional
+
+	
 
 	my $call = $self->server->call(
 		'wp.suggestCategories',
@@ -372,7 +409,9 @@ sub uploadFile {
 	my $self = shift;
 	my $blog_id = $self->blog_id;
 	my $data = shift;
-   defined $data or croak('missing data hash ref arg');
+	
+	defined $data or confess('missing data hash ref arg');
+   
 
 	my $call = $self->server->call(
 		'wp.uploadFile',
@@ -402,7 +441,8 @@ sub newPost {
 	unless (defined $publish) {
 		$publish = $self->publish;
 	}
-   defined $content_struct or croak('missing post hash ref arg');
+   defined $content_struct or confess('missing post hash ref arg');
+
 
 	my $call = $self->server->call(
 		'metaWeblog.newPost',
@@ -435,7 +475,9 @@ sub editPost {
 	unless (defined $publish) {
 		$publish = $self->publish;
 	}
-   defined $content_struct or croak('missing post hash ref arg');
+
+	defined $post_id or confess('missing post id');
+	defined $content_struct or confess('missing content struct hash ref arg');
 
 	my $call = $self->server->call(
 		'metaWeblog.editPost',
@@ -463,7 +505,8 @@ sub getPost {
 	my $post_id = shift;
 	my $user_login = $self->username;
 	my $user_pass = $self->password;
-   defined $post_id or croak('missing post id arg');
+   defined $post_id or confess('missing post id arg');
+
 
 	my $call = $self->server->call(
 		'metaWeblog.getPost',
@@ -490,6 +533,7 @@ sub getRecentPosts {
 	my $user_login = $self->username;
 	my $user_pass = $self->password;
 	my $num_posts = shift;
+   
 
 	my $call = $self->server->call(
 		'metaWeblog.getRecentPosts',
@@ -516,6 +560,7 @@ sub getCategories {
 	my $blog_id = $self->blog_id;
 	my $user_login = $self->username;
 	my $user_pass = $self->password;
+   
 
 	my $call = $self->server->call(
 		'metaWeblog.getCategories',
@@ -541,7 +586,7 @@ sub newMediaObject {
 	my $blog_id = $self->blog_id;
 	my $data = shift;
 
-   defined $data or croak('missing data hash ref arg');
+   defined $data or confess('missing data hash ref arg');
 
 	my $call = $self->server->call(
 		'metaWeblog.newMediaObject',
@@ -565,6 +610,7 @@ sub newMediaObject {
 # xmlrpc.php: function blogger_deletePost
 sub deletePost {
 	my $self = shift;
+   my $blog_id = $self->blog_id;
 	my $post_id = shift;
 	my $user_login = $self->username;
 	my $user_pass = $self->password;
@@ -573,11 +619,11 @@ sub deletePost {
 		$publish = $self->publish;
 	}
 
-   defined $post_id or croak('missing post id arg');
+	defined $post_id or confess('missing post id');
 
 	my $call = $self->server->call(
 		'metaWeblog.deletePost',
-      1, #ignored
+      $blog_id, #ignored
 		$post_id,
 		$user_login,
 		$user_pass,
@@ -602,6 +648,8 @@ sub getTemplate {
 	my $user_login = $self->username;
 	my $user_pass = $self->password;
 	my $template = shift;
+
+	defined $template or confess('missing template string');   
 
 	my $call = $self->server->call(
 		'metaWeblog.getTemplate',
@@ -631,6 +679,9 @@ sub setTemplate {
 	my $content = shift;
 	my $template = shift;
 
+	defined $template or confess('missing template string arg');
+	defined $content or confess('missing content hash ref arg');
+
 	my $call = $self->server->call(
 		'metaWeblog.setTemplate',
 		$blog_id,
@@ -656,6 +707,7 @@ sub getUsersBlogs {
 	my $self = shift;
 	my $user_login = $self->username;
 	my $user_pass = $self->password;
+   
 
 	my $call = $self->server->call(
 		'metaWeblog.getUsersBlogs',
@@ -688,9 +740,54 @@ __END__
 
 WordPress::XMLRPC
 
+=head1 SYNOPSIS
+
+   use WordPress::XMLRPC;
+
+   my $o = WordPress:::XMLRPC->new({
+     username => 'author1',
+     password => 'superpass',
+     proxy => 'http://mysite.com/xmlrpc.php',
+   });
+
+   my $post = $o->getPost(5); # id 5
+
+   # let's change the title
+   $post->{title} = 'I did not like the old title.';
+
+   # let's save the changes back to the server..
+   $o->editPost(5, $post, 1); # 1 is publish
+
+
+
 =head1 DESCRIPTION
 
 Interaction with xmlrpc.php as client.
+
+
+=head1 CONSTRUCTOR
+
+=head2 new()
+
+optional arg is hash ref
+
+before we open a connection with xmlrpc, we need to have 
+username, password, and proxy in the object's data.
+You can provide this in the following ways..
+
+   my $o = WordPress:::XMLRPC->new({
+     username => 'author1',
+     password => 'superpass',
+     proxy => 'http://mysite.com/xmlrpc.php',
+   });
+
+
+   my $o = WordPress:::XMLRPC->new;   
+   $o->username('author1');
+   $o->password('superpass');
+   $o->proxy('http://mysite.com/xmlrpc.php');
+
+ 
 
 =head1 XML RPC METHODS
 

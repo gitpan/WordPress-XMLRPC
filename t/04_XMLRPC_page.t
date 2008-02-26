@@ -26,11 +26,18 @@ my $_attempt_delete =1;
 
 
 
+# we know this fails:
+#my $np1 = $w->newPage;
+
+
+
+
 
 
 ### PAGE
 my $_name = 'page '.time().int(rand(256));
-my $newPage = $w->newPage({title => $_name,  description => 'bogus content' });
+my $newPage = $w->newPage({title => $_name,  description => 'bogus content' })
+   or die($w->errstr);
 ### $newPage
 ok($newPage, "new page returns id $newPage") or die;
 
@@ -40,7 +47,8 @@ my $editPage = $w->editPage($newPage,
 ok( $editPage,'editPage succeeds');
 
 
-my $getPage = $w->getPage($newPage);
+my $getPage = $w->getPage($newPage) or die("error string: ".$w->errstr);
+
 ## $getPage;
 
 ok( ref $getPage eq 'HASH', 'getPage returns hash ref');

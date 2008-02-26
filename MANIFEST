@@ -1,5 +1,6 @@
 t/analize_xmlrpc.pl
 t/04_XMLRPC_post.t
+t/04_XMLRPC_page.t
 t/02_XMLRPC.t
 t/00_basic.t
 t/10_XMLRPC.out
