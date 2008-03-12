@@ -12,5 +12,4 @@ MANIFEST
 lib/WordPress/XMLRPC.pm
 Makefile.PL
 README
-
 META.yml                                 Module meta-data (added by MakeMaker)

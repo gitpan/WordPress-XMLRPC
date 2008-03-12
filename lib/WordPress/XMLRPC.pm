@@ -3,7 +3,7 @@ use warnings;
 use strict;
 use Carp;
 use vars qw($VERSION);
-$VERSION = sprintf "%d.%02d", q$Revision: 1.9 $ =~ /(\d+)/g;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.10 $ =~ /(\d+)/g;
 
 sub new {
    my ($class,$self) = @_;
@@ -223,11 +223,11 @@ sub newPage {
 
 # xmlrpc.php: function wp_deletePage
 sub deletePage {
-	my $self = shift;
-	my $blog_id = $self->blog_id;  
-	my $username = $self->username;
-	my $password = $self->password;
-	my $page_id = shift;
+	my $self       = shift;
+	my $blog_id    = $self->blog_id;  
+	my $username   = $self->username;
+	my $password   = $self->password;
+	my $page_id    = shift;
 
 	defined $page_id or confess('missing page id arg');
    
@@ -253,13 +253,13 @@ sub deletePage {
 
 # xmlrpc.php: function wp_editPage
 sub editPage {
-	my $self = shift;
-	my $blog_id = $self->blog_id;
-   my $page_id = shift;
-	my $content = shift;
-	my $publish = shift;
-   my $password = $self->password;
-   my $username = $self->username;
+	my $self       = shift;
+	my $blog_id    = $self->blog_id;
+   my $page_id    = shift;
+	my $content    = shift;
+	my $publish    = shift;
+   my $password   = $self->password;
+   my $username   = $self->username;
 
 	defined $page_id or confess('missing page id arg');
 	defined $content or confess('missing content hash ref arg');
@@ -733,7 +733,6 @@ sub getUsersBlogs {
 
 __END__
 
-
 =pod
 
 =head1 NAME
@@ -764,7 +763,6 @@ WordPress::XMLRPC
 
 Interaction with xmlrpc.php as client.
 
-
 =head1 CONSTRUCTOR
 
 =head2 new()
@@ -781,17 +779,90 @@ You can provide this in the following ways..
      proxy => 'http://mysite.com/xmlrpc.php',
    });
 
+Or..
 
-   my $o = WordPress:::XMLRPC->new;   
+   my $o = WordPress:::XMLRPC->new;  
+   
    $o->username('author1');
    $o->password('superpass');
    $o->proxy('http://mysite.com/xmlrpc.php');
 
+   $o->server 
+      or die( 
+         sprintf 'could not connect with %s:%s to %s',
+            $self->username,
+            $self->password,
+            $self->proxy,
+         );
  
+=head1 METHODS
 
-=head1 XML RPC METHODS
+=head2 xmlrpc_methods()
 
-=head2 getPage()
+returns array of methods in this package that make calls via xmlrpc
+
+=head2 server_methods()
+
+returns array of server methods accessible via xmlrpc.
+
+=head2 username()
+
+Perl set/get method. Argument is string.
+If you pass 'username' to constructor, it is prepopulated.
+
+   my $username = $o->username;
+   $o->username('bill');
+
+=head2 password()
+
+Perl set/get method. Argument is string.
+If you pass 'password' to constructor, it is prepopulated.
+
+   my $pw = $o->password;
+   $o->password('jim');
+
+=head2 proxy()
+
+Perl set/get method. Argument is string.
+If you pass 'proxy' to constructor, it is prepopulated.
+
+=head2 server()
+
+Returns XMLRPC::Lite object.
+proxy() must be set
+
+=head2 blog_id()
+
+setget method, set to '1' by default
+
+=head2 publish()
+
+many methods use 'publish' boolean value, by default we set to 1
+you can still pass a value for publish such as
+
+   $o->newPost( $content_hashref, 1 );
+
+but you can also call 
+
+   $o->newPost( $content_hashref );
+
+As we said, by default it is set to 1, if you want to set the default to 0,
+
+   $o->publish(0);
+
+=head2 errstr()
+
+returns error string if a call fails
+
+   $o->newPost(@args) or die($o->errstr);
+
+
+=head2 XML RPC METHODS
+
+These methods specifically mirror the xmlrpc.php file provided by WordPress installations.
+This file sits on your website.
+
+=head3 getPage()
 
 takes 1 args: page_id (number)
 
@@ -828,26 +899,25 @@ example return:
 
 This is the same struct hashref you would send to newPage()
 
-=head2 getPages()
+=head3 getPages()
 
 returns array ref
 each element is a hash ref same as getPage() returns.
 If you want less info, just basic info on each page, use getPageList()
 
-=head2 newPage()
+=head3 newPage()
 
 takes 2 args: page (hashref), publish (boolean)
 you can leave out publish, as discussed further in this documentation.
 the hashref must have at least a title and description
 returns page id (number, assigned by server).
 
-
-=head2 deletePage()
+=head3 deletePage()
 
 takes 1 args: page_id (number)
 returns boolean (true or false)
 
-=head2 editPage()
+=head3 editPage()
 
 takes 2 args: page (hashref), publish(boolean)
 the page hashref is just as discussed in getPage()
@@ -864,7 +934,7 @@ call getPage().
 
 The same would be done with the posts.
 
-=head2 getPageList()
+=head3 getPageList()
 
 returns array ref
 each element is a hash ref
@@ -890,7 +960,7 @@ example return:
 	                ]
 
 
-=head2 getAuthors()
+=head3 getAuthors()
 
 takes no argument
 returns array ref, each element is a hashref 
@@ -909,7 +979,7 @@ returns array ref, each element is a hashref
 	                ]
 
 
-=head2 getCategories()
+=head3 getCategories()
 
 takes no argument
 
@@ -933,34 +1003,34 @@ takes no argument
 	                ]
 
 
-=head2 newCategory()
+=head3 newCategory()
 
 takes 1 args: category (string)
 returns category id (number)
 
-=head2 suggestCategories()
+=head3 suggestCategories()
 
 takes 2 args: category, max_results
 
 returns array ref, each element is a hashref
 (not sure what this is for)
 
-=head2 uploadFile()
+=head3 uploadFile()
 
 takes 1 args: data
 data is a hash ref, see WordPress::MediaObject
 
-=head2 newPost()
+=head3 newPost()
 
 takes 2 args: content_struct, publish
 returns id number of new post
 
-=head2 editPost()
+=head3 editPost()
 
 takes 3 args: post_ID, content_struct, publish
 returns boolean, true or false
 
-=head2 getPost()
+=head3 getPost()
 
 takes 1 args: post_ID
 returns post struct, hashref
@@ -988,14 +1058,16 @@ returns post struct, hashref
 	                          wp_slug => 'test_1201731544'
 	                        }
 
-=head2 getRecentPosts()
+=head3 getRecentPosts()
 
 takes 1 args: num_posts (number, optional)
 
 returns array ref
 each element is hash ref same as getPost() would return
 
-=head2 getCategories()
+=head3 getCategories()
+
+Example return value:
 
 	 $return_value: [
 	                  {
@@ -1016,20 +1088,20 @@ each element is hash ref same as getPost() would return
 	                  }
 	                ]
 
-=head2 newMediaObject()
+=head3 newMediaObject()
 
 takes 1 args: data (hashref)
-See WordPress::MediaObject
+The hashref keys and values are bits (Mime::Base64), type (mime type), and name (filename).
 
-=head2 getTemplate()
+=head3 getTemplate()
 
 takes 1 args: template
 
-=head2 setTemplate()
+=head3 setTemplate()
 
 takes 2 args: content, template
 
-=head2 getUsersBlogs()
+=head3 getUsersBlogs()
 
 no argument, terutns users blogs
 example return :
@@ -1043,73 +1115,14 @@ example return :
 	       }
 	     ]
 
-
-=head1 deletePost()
+=head3 deletePost()
 
 argument is post id(number)
 returns boolean
 
+=head1 WISHLIST
 
-=head1 METHODS
-
-=head2 xmlrpc_methods()
-
-returns array of methods in this package that make calls via xmlrpc
-
-=head2 server_methods()
-
-returns array of server methods accessible via xmlrpc.
-
-=head2 username()
-
-Perl set/get method. Argument is string.
-If you pass 'username' to constructor, it is prepopulated.
-
-   my $username = $o->username;
-   $o->username('bill');
-
-=head2 password()
-
-Perl set/get method. Argument is string.
-If you pass 'password' to constructor, it is prepopulated.
-
-   my $pw = $o->password;
-   $o->password('jim');
-
-=head2 proxy()
-
-Perl set/get method. Argument is string.
-If you pass 'poxy' to constructor, it is prepopulated.
-
-=head2 server()
-
-returns XMLRPC::Lite object
-proxy must be set
-
-=head2 blog_id()
-
-setget method, set to '1' by default
-
-=head2 publish()
-
-many methods use 'publish' boolean value, by default we set to 1
-you can still pass a value for publish such as
-
-   $o->newPost( $content_hashref, 1 );
-
-but you can also call 
-
-   $o->newPost( $content_hashref );
-
-As we said, by default it is set to 1, if you want to set the default to 0,
-
-   $o->publish(0);
-
-=head2 errstr()
-
-returns error string if a call fails
-
-   $o->newPost(@args) or die($o->errstr);
+It'd be nice to manage links via xmlrpc.
 
 =head1 AUTHOR
 
@@ -1124,9 +1137,14 @@ Please submit to AUTHOR
 This distro is alpha.
 Included are the metaWeblog and wp method calls.
 
+=head1 REQUIREMENTS
+
+L<XMLRPC::Lite>
+
 =head1 SEE ALSO
 
-XMLRPC::Lite
-SOAP::Lite
+L<XMLRPC::Lite>
+L<SOAP::Lite>
+WordPress L<http://wordpress.org>
 
 =cut

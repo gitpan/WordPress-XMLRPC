@@ -1,11 +1,24 @@
 WordPress::XMLRPC
 
-$Revision: 1.1.1.1 $
+$Revision: 1.2 $
 
+INSTALL
+=======
+
+I suggest you install via downloading the package from cpan and testing.
+
+Example:
+
+   wget http://search.cpan.org/CPAN/authors/id/L/LE/LEOCHARRE/WordPress-XMLRPC-1.09.tar.gz
+   tar -xvf ./WordPress-XMLRPC-1.09.tar.gz
+   cd WordPress-XMLRPC-1.09
+   vim t/wppost # see TESTING
+   perl Makefile.PL
+   make test
+   make install   
 
 TESTING
 =======
-
 
 To test fully, you need to set up a ./t/wppost YAML
 
