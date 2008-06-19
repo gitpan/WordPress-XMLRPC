@@ -3,8 +3,8 @@ use warnings;
 use strict;
 use Carp;
 use vars qw($VERSION);
-$VERSION = sprintf "%d.%02d", q$Revision: 1.10 $ =~ /(\d+)/g;
-
+$VERSION = sprintf "%d.%02d", q$Revision: 1.11 $ =~ /(\d+)/g;
+use Smart::Comments;
 sub new {
    my ($class,$self) = @_;
    $self||={};
@@ -351,6 +351,8 @@ sub newCategory {
 	my $username = $self->username;
 	my $password = $self->password;
 	my $category = shift;
+
+   ### $category
 
 	defined $category or confess('missing category string');
 
@@ -1005,8 +1007,13 @@ takes no argument
 
 =head3 newCategory()
 
-takes 1 args: category (string)
-returns category id (number)
+Takes 1 args: category (string)
+Returns category id (number)
+
+WARNING, this is not working right. I think it's a bug in my version of WordPress.
+If you submit 'houses', it just creates a category called 'h'.
+Also, if the category already exists, returns the same id as the previous one.
+
 
 =head3 suggestCategories()
 

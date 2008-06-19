@@ -5,6 +5,8 @@ t/02_XMLRPC.t
 t/00_basic.t
 t/10_XMLRPC.out
 t/10_XMLRPC.t.optional
+t/11_category_new.t
+t/12_categories.t
 t/xmlrpc.php
 t/test.pl
 t/04_XMLRPC_page.t

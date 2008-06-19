@@ -26,19 +26,35 @@ my $_attempt_delete = 0;
 
 
 my $getAuthors = $w->getAuthors;
-### getAuthors
+## getAuthors
 ok($getAuthors,'getAuthors()');
 
 my $getCategories = $w->getCategories;
 ok(ref $getCategories eq 'ARRAY' ,'getCategories');
-### $getCategories
+## $getCategories
 
 
-my $newCategory = $w->newCategory('test_category');
+
+my $ncn = ( int rand 10000 ).'testc';
+
+print STDERR "\n\n=======\nnewCategory.. \n";
+my $newCategory = $w->newCategory($ncn) 
+   or warn("newCategory no return, " . $w->errstr );
+
 ### $newCategory
+=pod
+unless( ok( $newCategory->{categoryName} eq $ncn ) ){
+   my @k = keys %$newCategory;
+   print STDERR "keys: ".scalar @k."\n";
+   for my $k  (@k){
+      my $v = $newCategory->{$k};
+      print STDERR" k:$k, v:$v\n";
+   }
 
+ die;
+}
 
-
+=cut
 
 for my $m (qw(getRecentPosts getUsersBlogs)){
    my $r = $w->$m;
