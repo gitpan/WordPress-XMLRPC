@@ -3,7 +3,7 @@ use warnings;
 use strict;
 use Carp;
 use vars qw($VERSION);
-$VERSION = sprintf "%d.%02d", q$Revision: 1.11 $ =~ /(\d+)/g;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.12 $ =~ /(\d+)/g;
 use Smart::Comments;
 sub new {
    my ($class,$self) = @_;
@@ -739,7 +739,7 @@ __END__
 
 =head1 NAME
 
-WordPress::XMLRPC
+WordPress::XMLRPC - api to wordpress rpc
 
 =head1 SYNOPSIS
 
@@ -760,18 +760,18 @@ WordPress::XMLRPC
    $o->editPost(5, $post, 1); # 1 is publish
 
 
-
 =head1 DESCRIPTION
 
-Interaction with xmlrpc.php as client.
+I wanted to interact via the command line to a wordpress blog's xmlrpc.php file.
+Bascially this is interaction with xmlrpc.php as client.
 
 =head1 CONSTRUCTOR
 
 =head2 new()
 
-optional arg is hash ref
+Optional arg is hash ref.
 
-before we open a connection with xmlrpc, we need to have 
+Before we open a connection with xmlrpc, we need to have 
 username, password, and proxy in the object's data.
 You can provide this in the following ways..
 
@@ -801,11 +801,11 @@ Or..
 
 =head2 xmlrpc_methods()
 
-returns array of methods in this package that make calls via xmlrpc
+Returns array of methods in this package that make calls via xmlrpc.
 
 =head2 server_methods()
 
-returns array of server methods accessible via xmlrpc.
+Returns array of server methods accessible via xmlrpc.
 
 =head2 username()
 
@@ -831,20 +831,21 @@ If you pass 'proxy' to constructor, it is prepopulated.
 =head2 server()
 
 Returns XMLRPC::Lite object.
-proxy() must be set
+proxy() must be set.
 
 =head2 blog_id()
 
-setget method, set to '1' by default
+Setget method, set to '1' by default.
+This seems unused by wordpress. They have some documentation on this.
 
 =head2 publish()
 
-many methods use 'publish' boolean value, by default we set to 1
-you can still pass a value for publish such as
+Many methods use 'publish' boolean value, by default we set to 1.
+You can still pass a value for publish such as;
 
    $o->newPost( $content_hashref, 1 );
 
-but you can also call 
+But you can also call;
 
    $o->newPost( $content_hashref );
 
@@ -854,7 +855,7 @@ As we said, by default it is set to 1, if you want to set the default to 0,
 
 =head2 errstr()
 
-returns error string if a call fails
+Returns error string if a call fails. 
 
    $o->newPost(@args) or die($o->errstr);
 
@@ -866,11 +867,11 @@ This file sits on your website.
 
 =head3 getPage()
 
-takes 1 args: page_id (number)
+Takes 1 args: page_id (number).
 
-returns page hashref struct(ure)
+Returns page hashref struct(ure).
 
-example return:
+Example return:
 
 	 $val: {
 	         categories => [
@@ -899,50 +900,50 @@ example return:
 	         wp_slug => 'perl-resources'
 	       }
 
-This is the same struct hashref you would send to newPage()
+This is the same struct hashref you would send to newPage().
 
 =head3 getPages()
 
-returns array ref
-each element is a hash ref same as getPage() returns.
-If you want less info, just basic info on each page, use getPageList()
+Returns array ref.
+Each element is a hash ref same as getPage() returns.
+If you want less info, just basic info on each page, use getPageList().
 
 =head3 newPage()
 
-takes 2 args: page (hashref), publish (boolean)
-you can leave out publish, as discussed further in this documentation.
-the hashref must have at least a title and description
-returns page id (number, assigned by server).
+Takes 2 args: page (hashref), publish (boolean).
+You can leave out publish, as discussed further in this documentation.
+The hashref must have at least a title and description.
+Returns page id (number, assigned by server).
 
 =head3 deletePage()
 
-takes 1 args: page_id (number)
-returns boolean (true or false)
+Takes 1 args: page_id (number).
+Returns boolean (true or false).
 
 =head3 editPage()
 
-takes 2 args: page (hashref), publish(boolean)
-the page hashref is just as discussed in getPage()
+Takes 2 args: page (hashref), publish(boolean).
+The page hashref is just as discussed in getPage().
 
-you could use getPage(), edit the returned hashref, and resubmit with editPage()
+You could use getPage(), edit the returned hashref, and resubmit with editPage().
 
    my $page_hashref = $o->getPage(5);
    $page_hashref->{title} = 'This is the New Title';
 
    $o->editPage($page_hashref) or die( $o->errstr );
 
-obviously the page id is in the page data (hashref), this is there inherently when you
+Obviously the page id is in the page data (hashref), this is there inherently when you
 call getPage().
 
 The same would be done with the posts.
 
 =head3 getPageList()
 
-returns array ref
-each element is a hash ref
-this is sort of a short version of getPages(), which returns all info for each.
+Returns arrayref.
+Each element is a hashref.
+This is sort of a short version of getPages(), which returns all info for each.
 
-example return:
+Example return:
 
 	 $return_value: [
 	                  {
@@ -964,8 +965,8 @@ example return:
 
 =head3 getAuthors()
 
-takes no argument
-returns array ref, each element is a hashref 
+Takes no argument.
+Returns array ref, each element is a hashref.
 
 	 $return_value: [
 	                  {
@@ -983,7 +984,7 @@ returns array ref, each element is a hashref
 
 =head3 getCategories()
 
-takes no argument
+Takes no argument.
 
 	 $return_value: [
 	                  {
@@ -1007,40 +1008,39 @@ takes no argument
 
 =head3 newCategory()
 
-Takes 1 args: category (string)
-Returns category id (number)
+Takes 1 args: category (string).
+Returns category id (number).
 
 WARNING, this is not working right. I think it's a bug in my version of WordPress.
 If you submit 'houses', it just creates a category called 'h'.
 Also, if the category already exists, returns the same id as the previous one.
-
+If you have a fix, please contact the AUTHOR.
 
 =head3 suggestCategories()
 
-takes 2 args: category, max_results
+Takes 2 args: category, max_results.
 
-returns array ref, each element is a hashref
-(not sure what this is for)
+Returns array ref, each element is a hashref (not sure what this is for).
 
 =head3 uploadFile()
 
-takes 1 args: data
-data is a hash ref, see WordPress::MediaObject
+Takes 1 args: data.
+Data is a hash ref, see WordPress::MediaObject.
 
 =head3 newPost()
 
-takes 2 args: content_struct, publish
-returns id number of new post
+Takes 2 args: content_struct, publish.
+Returns id number of new post.
 
 =head3 editPost()
 
-takes 3 args: post_ID, content_struct, publish
-returns boolean, true or false
+Takes 3 args: post_ID, content_struct, publish.
+Returns boolean, true or false.
 
 =head3 getPost()
 
-takes 1 args: post_ID
-returns post struct, hashref
+Takes 1 args: post_ID
+Returns post struct, hashref.
 
 	 $example_return_value: {
 	                          categories => [
@@ -1067,10 +1067,10 @@ returns post struct, hashref
 
 =head3 getRecentPosts()
 
-takes 1 args: num_posts (number, optional)
+Takes 1 args: num_posts (number, optional).
 
-returns array ref
-each element is hash ref same as getPost() would return
+Returns arrayref.
+Each element is hash ref same as getPost() would return.
 
 =head3 getCategories()
 
@@ -1097,21 +1097,21 @@ Example return value:
 
 =head3 newMediaObject()
 
-takes 1 args: data (hashref)
+Takes 1 args: data (hashref).
 The hashref keys and values are bits (Mime::Base64), type (mime type), and name (filename).
 
 =head3 getTemplate()
 
-takes 1 args: template
+Takes 1 args: template.
 
 =head3 setTemplate()
 
-takes 2 args: content, template
+Takes 2 args: content, template.
 
 =head3 getUsersBlogs()
 
-no argument, terutns users blogs
-example return :
+No argument, returns users blogs.
+Example return :
 
 	 $r: [
 	       {
@@ -1124,8 +1124,8 @@ example return :
 
 =head3 deletePost()
 
-argument is post id(number)
-returns boolean
+Argument is post id(number).
+Returns boolean.
 
 =head1 WISHLIST
 
