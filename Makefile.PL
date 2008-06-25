@@ -4,8 +4,7 @@ WriteMakefile(
    VERSION_FROM => 'lib/WordPress/XMLRPC.pm',
    PREREQ_PM => {
       'YAML' => 0,
-      'Smart::Comments' => 0,
+      'SOAP::Lite' => 0,
       'XMLRPC::Lite' => 0,
-
    },
 );

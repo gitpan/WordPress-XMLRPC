@@ -3,8 +3,7 @@ use warnings;
 use strict;
 use Carp;
 use vars qw($VERSION);
-$VERSION = sprintf "%d.%02d", q$Revision: 1.12 $ =~ /(\d+)/g;
-use Smart::Comments;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.13 $ =~ /(\d+)/g;
 sub new {
    my ($class,$self) = @_;
    $self||={};

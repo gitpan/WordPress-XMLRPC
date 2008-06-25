@@ -3,7 +3,6 @@ use strict;
 use lib './lib';
 require './t/test.pl';
 use WordPress::XMLRPC;
-use Smart::Comments '###';
 no strict 'refs';
 
 ok(1,'starting test.');
