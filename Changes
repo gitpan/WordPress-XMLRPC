@@ -1,0 +1,91 @@
+2008-06-25 11:18  cvs
+
+	* lib/WordPress/XMLRPC.pm: Added extra argument checking, now if
+	  you pass a scalar or hash instead of a hash ref when needed, we
+	  croak about it.  Someone contacted me trying to pass a hash
+	  instead of a hash ref to newPost().
+
+2008-06-25 07:47  cvs
+
+	* Makefile.PL, lib/WordPress/XMLRPC.pm, t/00_basic.t,
+	  t/02_XMLRPC.t, t/04_XMLRPC_page.t, t/04_XMLRPC_post.t,
+	  t/10_XMLRPC.t.optional, t/11_category_new.t, t/12_categories.t:
+	  Took out usage of Smart::Comments, some people were having
+	  trouble with deps.
+
+2008-06-20 11:09  cvs
+
+	* lib/WordPress/XMLRPC.pm: updated documentation
+
+2008-06-19 15:02  cvs
+
+	* MANIFEST: [no log message]
+
+2008-06-19 15:01  cvs
+
+	* lib/WordPress/XMLRPC.pm, t/11_category_new.t, t/12_categories.t:
+	  testing out newCategory, but it fails. I think WordPress has a
+	  bug.
+
+2008-06-17 15:06  cvs
+
+	* t/02_XMLRPC.t: [no log message]
+
+2008-03-12 16:29  cvs
+
+	* MANIFEST: [no log message]
+
+2008-03-12 11:48  cvs
+
+	* MANIFEST, README, lib/WordPress/XMLRPC.pm: [no log message]
+
+2008-02-26 14:12  cvs
+
+	* lib/WordPress/XMLRPC.pm: [no log message]
+
+2008-02-06 22:51  cvs
+
+	* MANIFEST: [no log message]
+
+2008-02-06 20:07  cvs
+
+	* lib/WordPress/XMLRPC.pm, MANIFEST: [no log message]
+
+2008-02-06 18:41  cvs
+
+	* lib/WordPress/XMLRPC.pm, t/04_XMLRPC_page.t: [no log message]
+
+2008-02-05 00:56  cvs
+
+	* lib/WordPress/XMLRPC.pm: [no log message]
+
+2008-02-04 19:36  cvs
+
+	* lib/WordPress/XMLRPC.pm: [no log message]
+
+2008-02-04 17:11  cvs
+
+	* t/02_XMLRPC.t, lib/WordPress/XMLRPC.pm: [no log message]
+
+2008-02-02 19:46  cvs
+
+	* lib/WordPress/XMLRPC.pm: [no log message]
+
+2008-02-01 19:35  cvs
+
+	* lib/WordPress/XMLRPC.pm: [no log message]
+
+2008-02-01 19:33  cvs
+
+	* MANIFEST, Makefile.PL, README, t/00_basic.t, t/02_XMLRPC.t,
+	  t/04_XMLRPC_page.t, t/04_XMLRPC_post.t, t/10_XMLRPC.out,
+	  t/10_XMLRPC.t.optional, t/analize_xmlrpc.pl, t/test.pl, t/wppost,
+	  t/xmlrpc.php, lib/WordPress/XMLRPC.pm: Initial revision
+
+2008-02-01 19:33  cvs
+
+	* MANIFEST, Makefile.PL, README, t/00_basic.t, t/02_XMLRPC.t,
+	  t/04_XMLRPC_page.t, t/04_XMLRPC_post.t, t/10_XMLRPC.out,
+	  t/10_XMLRPC.t.optional, t/analize_xmlrpc.pl, t/test.pl, t/wppost,
+	  t/xmlrpc.php, lib/WordPress/XMLRPC.pm: init import
+

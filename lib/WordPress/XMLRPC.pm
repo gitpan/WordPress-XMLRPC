@@ -3,7 +3,7 @@ use warnings;
 use strict;
 use Carp;
 use vars qw($VERSION);
-$VERSION = sprintf "%d.%02d", q$Revision: 1.13 $ =~ /(\d+)/g;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.14 $ =~ /(\d+)/g;
 sub new {
    my ($class,$self) = @_;
    $self||={};
@@ -48,6 +48,7 @@ sub blog_id {
    my $self = shift;
    my $val = shift;
    if( defined $val ){
+      $val=~/^\d+$/ or croak('argument must be digits');
       $self->{blog_id} = $val;      
    }
    $self->{blog_id} ||= 1;
@@ -191,7 +192,7 @@ sub newPage {
 	my $page = shift;
 
 	defined $page or confess('missing page arg');
-      
+   ref $page eq 'HASH' or croak('arg is not hash ref');
    
 	my $publish = shift;
 	unless (defined $publish) {
@@ -262,6 +263,7 @@ sub editPage {
 
 	defined $page_id or confess('missing page id arg');
 	defined $content or confess('missing content hash ref arg');
+   ref $content eq 'HASH' or croak('arg is not hash ref');
    
 	unless (defined $publish) {
 		$publish = $self->publish;
@@ -412,6 +414,7 @@ sub uploadFile {
 	my $data = shift;
 	
 	defined $data or confess('missing data hash ref arg');
+   ref $data eq 'HASH' or croak('arg is not hash ref');
    
 
 	my $call = $self->server->call(
@@ -443,7 +446,7 @@ sub newPost {
 		$publish = $self->publish;
 	}
    defined $content_struct or confess('missing post hash ref arg');
-
+   ref $content_struct eq 'HASH' or croak('arg is not hash ref');
 
 	my $call = $self->server->call(
 		'metaWeblog.newPost',
@@ -479,6 +482,7 @@ sub editPost {
 
 	defined $post_id or confess('missing post id');
 	defined $content_struct or confess('missing content struct hash ref arg');
+   ref $content_struct eq 'HASH' or croak('arg is not hash ref');
 
 	my $call = $self->server->call(
 		'metaWeblog.editPost',
@@ -588,6 +592,7 @@ sub newMediaObject {
 	my $data = shift;
 
    defined $data or confess('missing data hash ref arg');
+   ref $data eq 'HASH' or croak('arg is not hash ref');
 
 	my $call = $self->server->call(
 		'metaWeblog.newMediaObject',
@@ -682,6 +687,7 @@ sub setTemplate {
 
 	defined $template or confess('missing template string arg');
 	defined $content or confess('missing content hash ref arg');
+   ref $content eq 'HASH' or croak('arg is not hash ref');
 
 	my $call = $self->server->call(
 		'metaWeblog.setTemplate',
@@ -763,6 +769,7 @@ WordPress::XMLRPC - api to wordpress rpc
 
 I wanted to interact via the command line to a wordpress blog's xmlrpc.php file.
 Bascially this is interaction with xmlrpc.php as client.
+This module is not meant for speed, it is meant for convenience.
 
 =head1 CONSTRUCTOR
 
