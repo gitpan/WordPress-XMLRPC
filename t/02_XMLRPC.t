@@ -37,7 +37,7 @@ ok(ref $getCategories eq 'ARRAY' ,'getCategories');
 my $ncn = ( int rand 10000 ).'testc';
 
 print STDERR "\n\n=======\nnewCategory.. \n";
-my $newCategory = $w->newCategory($ncn) 
+my $newCategory = $w->newCategory({ name => $ncn }) 
    or warn("newCategory no return, " . $w->errstr );
 
 ### $newCategory

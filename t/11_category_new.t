@@ -7,8 +7,9 @@ no strict 'refs';
 
 ok(1,'starting test.');
 
-# WordPress has a bug - i think.. it doesn't register new categories properly via rpc
-exit;
+print STDERR " # WordPress has a bug - i think.. it doesn't register new categories properly via rpc\n\n";
+
+
 
 if( ! -f './t/wppost' ){
    ok(1, 'see README for further testing, skipped.');
@@ -19,29 +20,28 @@ if( ! -f './t/wppost' ){
 
 my $w = WordPress::XMLRPC->new(_conf('./t/wppost'));
 
-
-
-
-
-
 my $new_category_name ='category' .( int rand 1000 );
 
-print STDERR "new category name : $new_category_name\n";
+print STDERR " -- new category name will be : \n\t'$new_category_name'\n\n";
 
 
 
 my $new_category_id;
-ok( $new_category_id = $w->newCategory($new_category_name) ) 
-   or die("failed newCategory( '$new_category_name' ) ".$w->errstr );
+ok( $new_category_id = $w->newCategory({ name => $new_category_name} )) 
+   or warn("failed newCategory( '$new_category_name' ) ".$w->errstr );
 
 print STDERR "newCategory( '$new_category_name' ) gets id :  $new_category_id\n\n";
+
+ok( have_catname($new_category_name), "new cat $new_category_name is now present");
+
+
 
 
 
 
 $new_category_name.="_appended";
 my $new_category_id2;
-ok( $new_category_id2 = $w->newCategory($new_category_name) ) 
+ok( $new_category_id2 = $w->newCategory({ name => $new_category_name}) ) 
    or die("failed newCategory( '$new_category_name' ) ".$w->errstr );
 
 print STDERR "newCategory( '$new_category_name' ) gets id :  $new_category_id2\n\n";
@@ -50,4 +50,25 @@ ok($new_category_id != $new_category_id2,
    "new cat 1 id ($new_category_id)  is not same as new cat 2 id ($new_category_id2)");
 
 
+ok( have_catname($new_category_name), "new cat $new_category_name is now present");
 
+
+my @catnames = map { $_->{categoryName} } @{$w->getCategories};
+print STDERR "categories are '@catnames'\n";
+
+###
+#
+#use Smart::Comments '###';
+#my $cats = $w->getCategories;
+
+## $cats
+
+sub have_catname {
+   my $_catname = shift;
+   
+   for ( @{$w->getCategories} ){
+      my $catname = $_->{categoryName};
+      return 1 if $catname eq $_catname;
+   }
+   return 0;
+}

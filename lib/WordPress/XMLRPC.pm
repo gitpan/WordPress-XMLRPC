@@ -3,7 +3,7 @@ use warnings;
 use strict;
 use Carp;
 use vars qw($VERSION);
-$VERSION = sprintf "%d.%02d", q$Revision: 1.14 $ =~ /(\d+)/g;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.15 $ =~ /(\d+)/g;
 sub new {
    my ($class,$self) = @_;
    $self||={};
@@ -352,6 +352,11 @@ sub newCategory {
 	my $username = $self->username;
 	my $password = $self->password;
 	my $category = shift;
+   (ref $category and ref $category eq 'HASH')
+      or croak("category must be a hash ref");
+
+   $category->{name} or confess('missing name in category struct');
+   
 
    ### $category
 
@@ -1014,13 +1019,19 @@ Takes no argument.
 
 =head3 newCategory()
 
-Takes 1 args: category (string).
+Takes 1 args: category struct.
 Returns category id (number).
 
-WARNING, this is not working right. I think it's a bug in my version of WordPress.
-If you submit 'houses', it just creates a category called 'h'.
-Also, if the category already exists, returns the same id as the previous one.
-If you have a fix, please contact the AUTHOR.
+The category struct is a hash ref alike..
+
+   {
+      name => 'Ugly houses',
+      slug => 'uglyhouse',
+      parent_id => 34, # (if this is a sub category )
+      description => 'this is a great category',
+   }
+
+The key 'name' must be present or croaks.
 
 =head3 suggestCategories()
 

@@ -1,3 +1,14 @@
+2008-07-28 09:31  cvs
+
+	* lib/WordPress/XMLRPC.pm, t/11_category_new.t: Fixed newCategory
+	  It was suggesting argument is string but it should have  been
+	  hash ref, now checks that the hash ref contains at least 'name'
+	  key.
+
+2008-06-25 11:19  cvs
+
+	* Changes, MANIFEST: added changefile
+
 2008-06-25 11:18  cvs
 
 	* lib/WordPress/XMLRPC.pm: Added extra argument checking, now if
@@ -17,63 +28,11 @@
 
 	* lib/WordPress/XMLRPC.pm: updated documentation
 
-2008-06-19 15:02  cvs
-
-	* MANIFEST: [no log message]
-
 2008-06-19 15:01  cvs
 
 	* lib/WordPress/XMLRPC.pm, t/11_category_new.t, t/12_categories.t:
 	  testing out newCategory, but it fails. I think WordPress has a
 	  bug.
-
-2008-06-17 15:06  cvs
-
-	* t/02_XMLRPC.t: [no log message]
-
-2008-03-12 16:29  cvs
-
-	* MANIFEST: [no log message]
-
-2008-03-12 11:48  cvs
-
-	* MANIFEST, README, lib/WordPress/XMLRPC.pm: [no log message]
-
-2008-02-26 14:12  cvs
-
-	* lib/WordPress/XMLRPC.pm: [no log message]
-
-2008-02-06 22:51  cvs
-
-	* MANIFEST: [no log message]
-
-2008-02-06 20:07  cvs
-
-	* lib/WordPress/XMLRPC.pm, MANIFEST: [no log message]
-
-2008-02-06 18:41  cvs
-
-	* lib/WordPress/XMLRPC.pm, t/04_XMLRPC_page.t: [no log message]
-
-2008-02-05 00:56  cvs
-
-	* lib/WordPress/XMLRPC.pm: [no log message]
-
-2008-02-04 19:36  cvs
-
-	* lib/WordPress/XMLRPC.pm: [no log message]
-
-2008-02-04 17:11  cvs
-
-	* t/02_XMLRPC.t, lib/WordPress/XMLRPC.pm: [no log message]
-
-2008-02-02 19:46  cvs
-
-	* lib/WordPress/XMLRPC.pm: [no log message]
-
-2008-02-01 19:35  cvs
-
-	* lib/WordPress/XMLRPC.pm: [no log message]
 
 2008-02-01 19:33  cvs
 
