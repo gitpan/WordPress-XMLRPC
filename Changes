@@ -1,3 +1,9 @@
+2008-07-28 17:25  cvs
+
+	* lib/WordPress/XMLRPC.pm, t/12_categories.t: added getCategory(),
+	  this was philosophically hard.. because there was no getCategory
+	  method in xmlrpc.php ... but it is very useful.
+
 2008-07-28 09:31  cvs
 
 	* lib/WordPress/XMLRPC.pm, t/11_category_new.t: Fixed newCategory

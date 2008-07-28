@@ -3,7 +3,7 @@ use warnings;
 use strict;
 use Carp;
 use vars qw($VERSION);
-$VERSION = sprintf "%d.%02d", q$Revision: 1.15 $ =~ /(\d+)/g;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.17 $ =~ /(\d+)/g;
 sub new {
    my ($class,$self) = @_;
    $self||={};
@@ -590,6 +590,27 @@ sub getCategories {
 	return $result;
 }
 
+
+# this nextone doesn't really exist.. this is a hack ..
+# this is not keeping in par with xmlrpc.php but.. shikes..
+sub getCategory {
+   my $self = shift;
+   my $id = shift;
+   $id or croak('missing id argument');
+
+   # get all categorise
+
+   my @cat = grep { $_->{categoryId} == $id } @{$self->getCategories};
+
+   @cat and scalar @cat 
+      or $self->errstr("Category id $id not found.")
+      and return;
+
+   return $cat[0];
+}
+
+
+
 # xmlrpc.php: function mw_newMediaObject
 sub newMediaObject {
 	my $self = shift;
@@ -1026,12 +1047,30 @@ The category struct is a hash ref alike..
 
    {
       name => 'Ugly houses',
-      slug => 'uglyhouse',
       parent_id => 34, # (if this is a sub category )
       description => 'this is a great category',
    }
 
 The key 'name' must be present or croaks.
+
+=head3 getCategory()
+
+Argument is category id, will return struct (hash ref).
+
+   ### $got: {
+   ####         categoryId => 99,
+   ####         categoryName => 'category772',
+   ####         description => 'category772',
+   ####         htmlUrl => 'http://leocharre.com/articles/category/category772/',
+   ####         parentId => '0',
+   ####         rssUrl => 'http://leocharre.com/articles/category/category772/feed/'
+   ####       }
+
+=head4 CAVEAT 
+
+There seems to be a bug in xmlrpc.php (wordpress v 2.3.2) , that does not fill out 
+the categories properly. You can use  newCategory() to insert a description, bu
+upon getCategory(), the struct description is replaced by the categoryName field.
 
 =head3 suggestCategories()
 

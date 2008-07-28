@@ -39,7 +39,7 @@ ok( have_catname($new_category_name), "new cat $new_category_name is now present
 
 
 
-$new_category_name.="_appended";
+$new_category_name.=" appended";
 my $new_category_id2;
 ok( $new_category_id2 = $w->newCategory({ name => $new_category_name}) ) 
    or die("failed newCategory( '$new_category_name' ) ".$w->errstr );
