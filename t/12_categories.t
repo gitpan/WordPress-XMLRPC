@@ -4,7 +4,6 @@ use lib './lib';
 require './t/test.pl';
 use WordPress::XMLRPC;
 no strict 'refs';
-use Smart::Comments '###';
 ok(1,'starting test.');
 
 # WordPress has a bug - i think.. it doesn't register new categories properly via rpc

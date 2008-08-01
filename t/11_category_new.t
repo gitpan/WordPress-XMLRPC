@@ -58,7 +58,6 @@ print STDERR "categories are '@catnames'\n";
 
 ###
 #
-#use Smart::Comments '###';
 #my $cats = $w->getCategories;
 
 ## $cats
