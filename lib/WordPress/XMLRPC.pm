@@ -3,7 +3,7 @@ use warnings;
 use strict;
 use Carp;
 use vars qw($VERSION);
-$VERSION = sprintf "%d.%02d", q$Revision: 1.18 $ =~ /(\d+)/g;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.19 $ =~ /(\d+)/g;
 
 sub new {
    my ($class,$self) = @_;
@@ -771,7 +771,7 @@ __END__
 
 =head1 NAME
 
-WordPress::XMLRPC - api to wordpress rpc
+WordPress::XMLRPC - api to wordpress xml rpc calls
 
 =head1 SYNOPSIS
 
@@ -797,6 +797,8 @@ WordPress::XMLRPC - api to wordpress rpc
 I wanted to interact via the command line to a wordpress blog's xmlrpc.php file.
 Bascially this is interaction with xmlrpc.php as client.
 This module is not meant for speed, it is meant for convenience.
+
+This is really useful to automate new postings, uploading media, etc.
 
 =head1 CONSTRUCTOR
 
@@ -1188,9 +1190,6 @@ Returns boolean.
 
 It'd be nice to manage links via xmlrpc.
 
-=head1 AUTHOR
-
-Leo Charre leocharre at cpan dot org
 
 =head1 BUGS
 
@@ -1211,4 +1210,22 @@ L<XMLRPC::Lite>
 L<SOAP::Lite>
 WordPress L<http://wordpress.org>
 
+=head1 AUTHOR
+
+Leo Charre leocharre at cpan dot org
+
+=head1 COPYRIGHT
+
+Copyright (c) 2009 Leo Charre. All rights reserved.
+
+=head1 LICENSE
+
+This package is free software; you can redistribute it and/or modify it under the same terms as Perl itself, i.e., under the terms of the "Artistic License" or the "GNU General Public License".
+
+=head1 DISCLAIMER
+
+This package is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+See the "GNU General Public License" for more details.
+   
 =cut

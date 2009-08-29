@@ -7,4 +7,8 @@ WriteMakefile(
       'SOAP::Lite' => 0,
       'XMLRPC::Lite' => 0,
    },
+   LICENSE => 'perl',
+   AUTHOR => 'Leo Charre leocharre at cpan dot org',
+   ABSTRACT_FROM => 'lib/WordPress/XMLRPC.pm',
+
 );

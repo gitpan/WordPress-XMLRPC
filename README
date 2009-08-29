@@ -1,6 +1,17 @@
-WordPress::XMLRPC
+WordPress::XMLRPC - api to wordpress xml rpc calls
+==================================================
 
-$Revision: 1.2 $
+$Revision: 1.3 $
+
+
+I wanted to interact via the command line to a wordpress blog's xmlrpc.php file.
+Bascially this is interaction with xmlrpc.php as client.
+This module is not meant for speed, it is meant for convenience.
+
+This is really useful to automate new postings, uploading media, etc.
+
+
+
 
 INSTALL
 =======
@@ -62,4 +73,7 @@ make install
 
 
 
-
+BUGS AND CONTACT
+================
+Please contact the author with any suggestions, for help, etc, at:
+Leo Charre leocharre at cpan dot org

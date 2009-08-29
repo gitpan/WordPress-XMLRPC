@@ -1,3 +1,8 @@
+2009-08-29 19:04  cvs
+
+	* Makefile.PL, README, lib/WordPress/XMLRPC.pm: Made sure that
+	  perl/gpl license shows up properly.
+
 2008-07-28 17:25  cvs
 
 	* lib/WordPress/XMLRPC.pm, t/12_categories.t: added getCategory(),
