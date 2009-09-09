@@ -1,3 +1,19 @@
+2009-09-09 11:37  cvs
+
+	* Makefile.PL, README, lib/WordPress/XMLRPC.pm,
+	  lib/WordPress/XMLRPC.pod, t/11_category.t, t/11_category_new.t,
+	  t/13_newmethods_in_new_xmlrpcversion.pl, t/14_options.t,
+	  t/15_templates.t, t/16_tags.t, t/17_comments.t,
+	  t/analize_xmlrpc.pl, t/wppost: Made major update, included many
+	  new xml rpc calls that were not available when this module was
+	  first built.	New methods:	deleteCategory deleteComment
+	  editComment getComment getCommentCount    getCommentStatusList
+	  getComments getOptions getPageStatusList    getPageTemplates
+	  getPostStatusList getTags newComment setOptions
+
+	  This has been updated to match the xmlrpc.php file included with;
+	  wordpress v 2.8.4
+
 2009-08-29 19:04  cvs
 
 	* Makefile.PL, README, lib/WordPress/XMLRPC.pm: Made sure that

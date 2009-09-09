@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               WordPress-XMLRPC
-version:            1.19
+version:            1.20
 abstract:           api to wordpress xml rpc calls
 author:
     - Leo Charre leocharre at cpan dot org
@@ -11,9 +11,12 @@ configure_requires:
 build_requires:
     ExtUtils::MakeMaker:  0
 requires:
-    SOAP::Lite:    0
-    XMLRPC::Lite:  0
-    YAML:          0
+    LEOCHARRE::CLI2:   0
+    LEOCHARRE::Debug:  0
+    Smart::Comments:   0
+    SOAP::Lite:        0
+    XMLRPC::Lite:      0
+    YAML:              0
 no_index:
     directory:
         - t

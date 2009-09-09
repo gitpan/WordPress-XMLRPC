@@ -1,24 +1,30 @@
 #!/usr/bin/perl
 use strict;
-use base 'LEOCHARRE::CLI';
-#use warnings;
-my $o = gopts('OC');
+use LEOCHARRE::CLI2 'OCsx';
+use LEOCHARRE::Debug;
 
 sub usage {
-   return qq{
-OPTION FLAGS:
+   qq{
 
    -O print as pod
    -C print as perl code
+   -s just show server methods
+   -x just show xmlrpc methods
 
    };
 }
 
 
+my $in = $ARGV[0];
+$in and ( $in=~/php$/ or die("arg in must be .php file") );
+
+$in ||= './t/xmlrpc.php';
+
+debug("File in : $in");
 
 # INIT SOURCE
 #
-open(FILE,'<','./t/xmlrpc.php') or die;
+open(FILE,'<', $in ) or die;
 my @src_lines = <FILE>;
 close FILE;
 
@@ -78,8 +84,9 @@ for (@interesting_methods) {
    _analize_method($_);
 }
 
-
-
+# just show xmlrpc methods?
+$opt_s and print "@external_method_names\n" and exit;
+$opt_x and print "@perl_method_names\n" and exit;
 
 # close the outputs
 
@@ -140,9 +147,9 @@ returns array of methods in this package that make calls via xmlrpc
 "\n=head1 AUTHOR\n\n=head1 BUGS\n\n=head1 CAVEATS\n\n=head1 SEE ALSO\n\n=cut\n";
 
 no warnings;
-print $OUT if !($o->{O} + $o->{C});
-print $CODE if $o->{C};
-print $POD if $o->{O};
+print $OUT if !($opt_O + $opt_C);
+print $CODE if $opt_C;
+print $POD if $opt_O;
 
 
 
@@ -163,7 +170,7 @@ sub _analize_method {
    $suggested_perl_name=~s/^.+\.//;
    push @perl_method_names, $suggested_perl_name;
    
-   if( !$o->{O} and !$o->{C} ){
+   if( !$opt_O and !$opt_C ){
 
       my $args;
       my $argcount;
@@ -178,7 +185,7 @@ sub _analize_method {
       $OUT.=         "    perl name: $suggested_perl_name\n";
       $OUT.=(sprintf "      %s args: %s\n", $argcount, $args ) if $args;
 
-      if (DEBUG){
+      if ($opt_d){
          my $code = $functs->{$internal_method_name};
          if($code and scalar @$code){
             $OUT.= "code:yes\n";
@@ -187,14 +194,14 @@ sub _analize_method {
       }
    }
 
-   elsif ($o->{O} or $o->{C}){  # if P(O)D or CODE OO
+   elsif ($opt_O or $opt_C){  # if P(O)D or CODE OO
       my $_all_args = $functs_args->{$internal_method_name};
 
       my @_args = grep { ! _call_arg_should_be_method($_) } 
          @{$functs_args->{$internal_method_name}}; # leave out args fed by oo
       
 
-      if($o->{C}){
+      if($opt_C){
 
 
          my $code = "# xmlrpc.php: function $internal_method_name\nsub $suggested_perl_name {\n";
@@ -235,7 +242,7 @@ sub _analize_method {
 
       }
 
-      if($o->{O}){
+      if($opt_O){
          $POD.= "=head2 $suggested_perl_name()\n\n";
          $POD.=(sprintf "takes %s args: %s\n\n", scalar @_args, join(', ',@_args) ) if @_args;
          #$POD.= "\n";#=cut\n\n";

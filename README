@@ -1,7 +1,7 @@
 WordPress::XMLRPC - api to wordpress xml rpc calls
 ==================================================
 
-$Revision: 1.3 $
+$Revision: 1.4 $
 
 
 I wanted to interact via the command line to a wordpress blog's xmlrpc.php file.
@@ -9,8 +9,7 @@ Bascially this is interaction with xmlrpc.php as client.
 This module is not meant for speed, it is meant for convenience.
 
 This is really useful to automate new postings, uploading media, etc.
-
-
+You could write your custom cli scripts to upload and mess with your wordpress blog.
 
 
 INSTALL
@@ -18,12 +17,14 @@ INSTALL
 
 I suggest you install via downloading the package from cpan and testing.
 
-Example:
+Example (note that this link points to an older version):
 
    wget http://search.cpan.org/CPAN/authors/id/L/LE/LEOCHARRE/WordPress-XMLRPC-1.09.tar.gz
    tar -xvf ./WordPress-XMLRPC-1.09.tar.gz
    cd WordPress-XMLRPC-1.09
+   
    vim t/wppost # see TESTING
+   
    perl Makefile.PL
    make test
    make install   
@@ -64,8 +65,8 @@ This may be useful to get acquainted with what's going on on the inside.
 
 Example output is in t/10_XMLRPC.out
 
-INSTALLATION
-============
+BASIC INSTALLATION
+==================
 
 perl Makefile.PL
 make test

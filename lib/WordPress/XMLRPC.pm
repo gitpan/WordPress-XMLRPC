@@ -2,8 +2,9 @@ package WordPress::XMLRPC;
 use warnings;
 use strict;
 use Carp;
+use LEOCHARRE::Debug;
 use vars qw($VERSION);
-$VERSION = sprintf "%d.%02d", q$Revision: 1.19 $ =~ /(\d+)/g;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.20 $ =~ /(\d+)/g;
 
 sub new {
    my ($class,$self) = @_;
@@ -77,18 +78,8 @@ sub server {
    return $self->{server};
 }
 
-sub server_methods {
-   my $self = shift;
-   return qw(wp.getPage wp.getPages wp.newPage wp.deletePage wp.editPage wp.getPageList wp.getAuthors wp.getCategories wp.newCategory wp.suggestCategories wp.uploadFile blogger.getUsersBlogs blogger.getUserInfo blogger.getPost blogger.getRecentPosts blogger.getTemplate blogger.setTemplate blogger.newPost blogger.editPost blogger.deletePost metaWeblog.newPost metaWeblog.editPost metaWeblog.getPost metaWeblog.getRecentPosts metaWeblog.getCategories metaWeblog.newMediaObject metaWeblog.deletePost metaWeblog.getTemplate metaWeblog.setTemplate metaWeblog.getUsersBlogs mt.getCategoryList mt.getRecentPostTitles mt.getPostCategories mt.setPostCategories mt.supportedMethods mt.supportedTextFilters mt.getTrackbackPings mt.publishPost pingback.ping demo.sayHello demo.addTwoNumbers);   
-}
-
-sub xmlrpc_methods {
-   my $self = shift;
-   return qw(getPage getPages newPage deletePage editPage getPageList
-   getAuthors getCategories newCategory suggestCategories uploadFile
-   newPost editPost getPost getRecentPosts getCategories newMediaObject
-   deletePost getTemplate setTemplate getUsersBlogs);
-}
+sub server_methods { qw/wp.getUsersBlogs wp.getPage wp.getPages wp.newPage wp.deletePage wp.editPage wp.getPageList wp.getAuthors wp.getCategories wp.getTags wp.newCategory wp.deleteCategory wp.suggestCategories wp.uploadFile wp.getCommentCount wp.getPostStatusList wp.getPageStatusList wp.getPageTemplates wp.getOptions wp.setOptions wp.getComment wp.getComments wp.deleteComment wp.editComment wp.newComment wp.getCommentStatusList blogger.getUsersBlogs blogger.getUserInfo blogger.getPost blogger.getRecentPosts blogger.getTemplate blogger.setTemplate blogger.newPost blogger.editPost blogger.deletePost metaWeblog.newPost metaWeblog.editPost metaWeblog.getPost metaWeblog.getRecentPosts metaWeblog.getCategories metaWeblog.newMediaObject metaWeblog.deletePost metaWeblog.getTemplate metaWeblog.setTemplate metaWeblog.getUsersBlogs mt.getCategoryList mt.getRecentPostTitles mt.getPostCategories mt.setPostCategories mt.supportedMethods mt.supportedTextFilters mt.getTrackbackPings mt.publishPost pingback.ping demo.sayHello demo.addTwoNumbers/ }
+sub xmlrpc_methods { qw/getUsersBlogs getPage getPages newPage deletePage editPage getPageList getAuthors getCategories getTags newCategory deleteCategory suggestCategories uploadFile getCommentCount getPostStatusList getPageStatusList getPageTemplates getOptions setOptions getComment getComments deleteComment editComment newComment getCommentStatusList newPost editPost getPost getRecentPosts getCategories newMediaObject deletePost getTemplate setTemplate getUsersBlogs/ }
 
 sub _call_has_fault {
    my $self = shift;
@@ -119,6 +110,7 @@ sub _call_has_fault {
 sub errstr {
    my ($self,$val) = @_;
    $self->{errstr} = $val if defined $val;   
+   ($self->{errstr} and $DEBUG) and Carp::cluck($self->{errstr});
    return $self->{errstr};
 }
 
@@ -675,15 +667,18 @@ sub deletePost {
 }
 
 # xmlrpc.php: function blogger_getTemplate
-sub getTemplate {
+sub getTemplate { # TODO this fails, why????
 	my $self = shift;
 	my $blog_id = $self->blog_id;
 	my $user_login = $self->username;
 	my $user_pass = $self->password;
-	my $template = shift;
+	my $template = shift;   
 
 	defined $template or confess('missing template string');   
-
+   ### $template
+   ### $blog_id
+   ### $user_login
+   ### $user_pass
 	my $call = $self->server->call(
 		'metaWeblog.getTemplate',
 		$blog_id,
@@ -763,469 +758,408 @@ sub getUsersBlogs {
 
 
 
+
+# new methods as of 2.8.4 ...
+# deleteCategory deleteComment editComment getComment getCommentCount getCommentStatusList
+# getComments getOptions getPageStatusList getPageTemplates getPostStatusList
+# getTags newComment setOptions
+
+# xmlrpc.php: function wp_deleteCategory
+sub deleteCategory {
+	my $self = shift;
+	my $blog_id = $self->blog_id;
+	my $username = $self->username;
+	my $password = $self->password;
+	my $category_id = shift;
+   _is_number($category_id);
+
+	my $call = $self->server->call(
+		'wp.deleteCategory',
+		$blog_id,
+		$username,
+		$password,
+		$category_id,
+	);
+
+	if ( $self->_call_has_fault($call) ){
+		return;
+	}
+
+	my $result = $call->result;
+	defined $result
+		or die('no result');
+
+	return $result;
+}
+
+# xmlrpc.php: function wp_deleteComment
+sub deleteComment {
+	my $self = shift;
+	my $blog_id = $self->blog_id;
+	my $username = $self->username;
+	my $password = $self->password;
+	my $comment_id = shift;
+   _is_number($comment_id);
+
+	my $call = $self->server->call(
+		'wp.deleteComment',
+		$blog_id,
+		$username,
+		$password,
+		$comment_id,
+	);
+
+	if ( $self->_call_has_fault($call) ){
+		return;
+	}
+
+	my $result = $call->result;
+	defined $result
+		or die('no result');
+
+	return $result;
+}
+
+# xmlrpc.php: function wp_editComment
+sub editComment {
+	my $self = shift;
+	my $blog_id = $self->blog_id;
+	my $username = $self->username;
+	my $password = $self->password;
+	my $comment_id = shift;
+   _is_number($comment_id);
+
+	my $content_struct = shift;
+   _is_href($content_struct);
+
+	my $call = $self->server->call(
+		'wp.editComment',
+		$blog_id,
+		$username,
+		$password,
+		$comment_id,
+		$content_struct,
+	);
+
+	if ( $self->_call_has_fault($call) ){
+		return;
+	}
+
+	my $result = $call->result;
+	defined $result
+		or die('no result');
+
+	return $result;
+}
+
+
+# xmlrpc.php: function wp_getComment
+sub getComment {
+	my $self = shift;
+	my $blog_id = $self->blog_id;
+	my $username = $self->username;
+	my $password = $self->password;
+	my $comment_id = shift;
+   _is_number($comment_id);
+
+	my $call = $self->server->call(
+		'wp.getComment',
+		$blog_id,
+		$username,
+		$password,
+		$comment_id,
+	);
+
+	if ( $self->_call_has_fault($call) ){
+		return;
+	}
+
+	my $result = $call->result;
+	defined $result
+		or die('no result');
+
+	return $result;
+}
+
+# xmlrpc.php: function wp_getCommentCount
+sub getCommentCount {
+	my $self = shift;
+	my $blog_id = $self->blog_id;
+	my $username = $self->username;
+	my $password = $self->password;
+	my $post_id = shift;
+   _is_number($post_id);
+
+	my $call = $self->server->call(
+		'wp.getCommentCount',
+		$blog_id,
+		$username,
+		$password,
+		$post_id,
+	);
+
+	if ( $self->_call_has_fault($call) ){
+		return;
+	}
+
+	my $result = $call->result;
+	defined $result
+		or die('no result');
+
+	return $result;
+}
+
+
+# xmlrpc.php: function wp_getCommentStatusList
+sub getCommentStatusList {
+	my $self = shift;
+	my $blog_id = $self->blog_id;
+	my $username = $self->username;
+	my $password = $self->password;
+
+	my $call = $self->server->call(
+		'wp.getCommentStatusList',
+		$blog_id,
+		$username,
+		$password,
+	);
+
+	if ( $self->_call_has_fault($call) ){
+		return;
+	}
+
+	my $result = $call->result;
+	defined $result
+		or die('no result');
+
+	return $result;
+}
+
+
+# xmlrpc.php: function wp_getComments
+sub getComments {
+	my $self = shift;
+	my $blog_id = $self->blog_id;
+	my $username = $self->username;
+	my $password = $self->password;
+	my $struct = shift;
+   _is_href($struct);
+
+	my $call = $self->server->call(
+		'wp.getComments',
+		$blog_id,
+		$username,
+		$password,
+		$struct,
+	);
+
+	if ( $self->_call_has_fault($call) ){
+		return;
+	}
+
+	my $result = $call->result;
+	defined $result
+		or die('no result');
+
+	return $result;
+}
+
+
+# xmlrpc.php: function wp_getOptions
+sub getOptions {
+	my $self = shift;
+	my $blog_id = $self->blog_id;
+	my $username = $self->username;
+	my $password = $self->password;
+	my $options = shift;
+
+	my $call = $self->server->call(
+		'wp.getOptions',
+		$blog_id,
+		$username,
+		$password,
+		$options,
+	);
+
+   $call or warn("no call");
+
+	if ( $self->_call_has_fault($call) ){
+		return;
+	}
+
+	my $result = $call->result;
+	defined $result
+		or die('no result');
+
+	return $result;
+}
+
+
+# xmlrpc.php: function wp_getPageStatusList
+sub getPageStatusList {
+	my $self = shift;
+	my $blog_id = $self->blog_id;
+	my $username = $self->username;
+	my $password = $self->password;
+
+	my $call = $self->server->call(
+		'wp.getPageStatusList',
+		$blog_id,
+		$username,
+		$password,
+	);
+
+	if ( $self->_call_has_fault($call) ){
+		return;
+	}
+
+	my $result = $call->result;
+	defined $result
+		or die('no result');
+
+	return $result;
+}
+
+# xmlrpc.php: function wp_getPageTemplates
+sub getPageTemplates {
+	my $self = shift;
+	my $blog_id = $self->blog_id;
+	my $username = $self->username;
+	my $password = $self->password;
+
+	my $call = $self->server->call(
+		'wp.getPageTemplates',
+		$blog_id,
+		$username,
+		$password,
+	);
+
+	if ($self->_call_has_fault($call)){
+		return;
+	}
+
+	my $result = $call->result;
+	defined $result
+		or die('no result');
+
+	return $result;
+}
+
+
+
+# xmlrpc.php: function wp_getPostStatusList
+sub getPostStatusList {
+	my $self = shift;
+	my $blog_id = $self->blog_id;
+	my $username = $self->username;
+	my $password = $self->password;
+
+	my $call = $self->server->call(
+		'wp.getPostStatusList',
+		$blog_id,
+		$username,
+		$password,
+	);
+
+	if ($self->_call_has_fault($call)){
+		return;
+	}
+
+	my $result = $call->result;
+	defined $result
+		or die('no result');
+
+	return $result;
+}
+
+# xmlrpc.php: function wp_getTags
+sub getTags {
+	my $self = shift;
+	my $blog_id = $self->blog_id;
+	my $username = $self->username;
+	my $password = $self->password;
+
+	my $call = $self->server->call(
+		'wp.getTags',
+		$blog_id,
+		$username,
+		$password,
+	);
+
+	if ($self->_call_has_fault($call)){
+		return;
+	}
+
+	my $result = $call->result;
+	defined $result
+		or die('no result');
+
+	return $result;
+}
+
+
+# xmlrpc.php: function wp_newComment
+sub newComment {
+	my $self = shift;
+	my $blog_id = $self->blog_id;
+	my $username = $self->username;
+	my $password = $self->password;
+	my $post = shift;
+	my $content_struct = shift;
+   _is_href($content_struct);
+
+	my $call = $self->server->call(
+		'wp.newComment',
+		$blog_id,
+		$username,
+		$password,
+		$post,
+		$content_struct,
+	);
+
+	if ($self->_call_has_fault($call)){
+		return;
+	}
+
+	my $result = $call->result;
+	defined $result
+		or die('no result');
+
+	return $result;
+}
+
+
+# xmlrpc.php: function wp_setOptions
+sub setOptions {
+	my $self = shift;
+	my $blog_id = $self->blog_id;
+	my $username = $self->username;
+	my $password = $self->password;
+	my $options = shift;
+
+	my $call = $self->server->call(
+		'wp.setOptions',
+		$blog_id,
+		$username,
+		$password,
+		$options,
+	);
+
+	if ($self->_call_has_fault($call)){
+		return;
+	}
+
+	my $result = $call->result;
+	defined $result
+		or die('no result');
+
+	return $result;
+}
+
+
+sub _is_number { $_[0]=~/^\d+$/ ? $_[0] : confess("Argument '$_[0] ' is not number") }
+sub _is_href { ($_[0] and (ref $_[0]) and (ref $_[0] eq 'HASH')) ? $_[0] : confess("Expected argument to be hashref/struct") }
 1;
 
 __END__
-
-=pod
-
-=head1 NAME
-
-WordPress::XMLRPC - api to wordpress xml rpc calls
-
-=head1 SYNOPSIS
-
-   use WordPress::XMLRPC;
-
-   my $o = WordPress:::XMLRPC->new({
-     username => 'author1',
-     password => 'superpass',
-     proxy => 'http://mysite.com/xmlrpc.php',
-   });
-
-   my $post = $o->getPost(5); # id 5
-
-   # let's change the title
-   $post->{title} = 'I did not like the old title.';
-
-   # let's save the changes back to the server..
-   $o->editPost(5, $post, 1); # 1 is publish
-
-
-=head1 DESCRIPTION
-
-I wanted to interact via the command line to a wordpress blog's xmlrpc.php file.
-Bascially this is interaction with xmlrpc.php as client.
-This module is not meant for speed, it is meant for convenience.
-
-This is really useful to automate new postings, uploading media, etc.
-
-=head1 CONSTRUCTOR
-
-=head2 new()
-
-Optional arg is hash ref.
-
-Before we open a connection with xmlrpc, we need to have 
-username, password, and proxy in the object's data.
-You can provide this in the following ways..
-
-   my $o = WordPress:::XMLRPC->new({
-     username => 'author1',
-     password => 'superpass',
-     proxy => 'http://mysite.com/xmlrpc.php',
-   });
-
-Or..
-
-   my $o = WordPress:::XMLRPC->new;  
-   
-   $o->username('author1');
-   $o->password('superpass');
-   $o->proxy('http://mysite.com/xmlrpc.php');
-
-   $o->server 
-      or die( 
-         sprintf 'could not connect with %s:%s to %s',
-            $self->username,
-            $self->password,
-            $self->proxy,
-         );
- 
-=head1 METHODS
-
-=head2 xmlrpc_methods()
-
-Returns array of methods in this package that make calls via xmlrpc.
-
-=head2 server_methods()
-
-Returns array of server methods accessible via xmlrpc.
-
-=head2 username()
-
-Perl set/get method. Argument is string.
-If you pass 'username' to constructor, it is prepopulated.
-
-   my $username = $o->username;
-   $o->username('bill');
-
-=head2 password()
-
-Perl set/get method. Argument is string.
-If you pass 'password' to constructor, it is prepopulated.
-
-   my $pw = $o->password;
-   $o->password('jim');
-
-=head2 proxy()
-
-Perl set/get method. Argument is string.
-If you pass 'proxy' to constructor, it is prepopulated.
-
-=head2 server()
-
-Returns XMLRPC::Lite object.
-proxy() must be set.
-
-=head2 blog_id()
-
-Setget method, set to '1' by default.
-This seems unused by wordpress. They have some documentation on this.
-
-=head2 publish()
-
-Many methods use 'publish' boolean value, by default we set to 1.
-You can still pass a value for publish such as;
-
-   $o->newPost( $content_hashref, 1 );
-
-But you can also call;
-
-   $o->newPost( $content_hashref );
-
-As we said, by default it is set to 1, if you want to set the default to 0,
-
-   $o->publish(0);
-
-=head2 errstr()
-
-Returns error string if a call fails. 
-
-   $o->newPost(@args) or die($o->errstr);
-
-
-=head2 XML RPC METHODS
-
-These methods specifically mirror the xmlrpc.php file provided by WordPress installations.
-This file sits on your website.
-
-=head3 getPage()
-
-Takes 1 args: page_id (number).
-
-Returns page hashref struct(ure).
-
-Example return:
-
-	 $val: {
-	         categories => [
-	                         'Uncategorized'
-	                       ],
-	         dateCreated => '20080121T12:38:30',
-	         date_created_gmt => '20080121T20:38:30',
-	         description => 'These are some interesting resources online.',
-	         excerpt => '',
-	         link => 'http://leocharre.com/perl-resources/',
-	         mt_allow_comments => '0',
-	         mt_allow_pings => '0',
-	         page_id => '87',
-	         page_status => 'publish',
-	         permaLink => 'http://leocharre.com/perl-resources/',
-	         text_more => '',
-	         title => 'Resources',
-	         userid => '2',
-	         wp_author => 'leocharre',
-	         wp_author_display_name => 'leocharre',
-	         wp_author_id => '2',
-	         wp_page_order => '0',
-	         wp_page_parent_id => '0',
-	         wp_page_parent_title => '',
-	         wp_password => '',
-	         wp_slug => 'perl-resources'
-	       }
-
-This is the same struct hashref you would send to newPage().
-
-=head3 getPages()
-
-Returns array ref.
-Each element is a hash ref same as getPage() returns.
-If you want less info, just basic info on each page, use getPageList().
-
-=head3 newPage()
-
-Takes 2 args: page (hashref), publish (boolean).
-You can leave out publish, as discussed further in this documentation.
-The hashref must have at least a title and description.
-Returns page id (number, assigned by server).
-
-=head3 deletePage()
-
-Takes 1 args: page_id (number).
-Returns boolean (true or false).
-
-=head3 editPage()
-
-Takes 2 args: page (hashref), publish(boolean).
-The page hashref is just as discussed in getPage().
-
-You could use getPage(), edit the returned hashref, and resubmit with editPage().
-
-   my $page_hashref = $o->getPage(5);
-   $page_hashref->{title} = 'This is the New Title';
-
-   $o->editPage($page_hashref) or die( $o->errstr );
-
-Obviously the page id is in the page data (hashref), this is there inherently when you
-call getPage().
-
-The same would be done with the posts.
-
-=head3 getPageList()
-
-Returns arrayref.
-Each element is a hashref.
-This is sort of a short version of getPages(), which returns all info for each.
-
-Example return:
-
-	 $return_value: [
-	                  {
-	                    dateCreated => '20061113T11:08:22',
-	                    date_created_gmt => '20061113T19:08:22',
-	                    page_id => '2',
-	                    page_parent_id => '0',
-	                    page_title => 'About Moi'
-	                  },
-	                  {
-	                    dateCreated => '20080105T18:57:24',
-	                    date_created_gmt => '20080106T02:57:24',
-	                    page_id => '43',
-	                    page_parent_id => '74',
-	                    page_title => 'tree'
-	                  },
-	                ]
-
-
-=head3 getAuthors()
-
-Takes no argument.
-Returns array ref, each element is a hashref.
-
-	 $return_value: [
-	                  {
-	                    display_name => 'leo',
-	                    user_id => '2',
-	                    user_login => 'leo'
-	                  },
-	                  {
-	                    display_name => 'chamon',
-	                    user_id => '3',
-	                    user_login => 'chamon'
-	                  }
-	                ]
-
-
-=head3 getCategories()
-
-Takes no argument.
-
-	 $return_value: [
-	                  {
-	                    categoryId => '4',
-	                    categoryName => 'art',
-	                    description => 'art',
-	                    htmlUrl => 'http://leocharre.com/articles/category/art/',
-	                    parentId => '0',
-	                    rssUrl => 'http://leocharre.com/articles/category/art/feed/'
-	                  },
-	                  {
-	                    categoryId => '1',
-	                    categoryName => 'Uncategorized',
-	                    description => 'Uncategorized',
-	                    htmlUrl => 'http://leocharre.com/articles/category/uncategorized/',
-	                    parentId => '0',
-	                    rssUrl => 'http://leocharre.com/articles/category/uncategorized/feed/'
-	                  }
-	                ]
-
-
-=head3 newCategory()
-
-Takes 1 args: category struct.
-Returns category id (number).
-
-The category struct is a hash ref alike..
-
-   {
-      name => 'Ugly houses',
-      parent_id => 34, # (if this is a sub category )
-      description => 'this is a great category',
-   }
-
-The key 'name' must be present or croaks.
-
-=head3 getCategory()
-
-Argument is category id, will return struct (hash ref).
-
-   ### $got: {
-   ####         categoryId => 99,
-   ####         categoryName => 'category772',
-   ####         description => 'category772',
-   ####         htmlUrl => 'http://leocharre.com/articles/category/category772/',
-   ####         parentId => '0',
-   ####         rssUrl => 'http://leocharre.com/articles/category/category772/feed/'
-   ####       }
-
-=head4 CAVEAT 
-
-There seems to be a bug in xmlrpc.php (wordpress v 2.3.2) , that does not fill out 
-the categories properly. You can use  newCategory() to insert a description, bu
-upon getCategory(), the struct description is replaced by the categoryName field.
-
-=head3 suggestCategories()
-
-Takes 2 args: category, max_results.
-
-Returns array ref, each element is a hashref (not sure what this is for).
-
-=head3 uploadFile()
-
-Takes 1 args: data.
-Data is a hash ref, see WordPress::MediaObject.
-
-=head3 newPost()
-
-Takes 2 args: content_struct, publish.
-Returns id number of new post.
-
-=head3 editPost()
-
-Takes 3 args: post_ID, content_struct, publish.
-Returns boolean, true or false.
-
-=head3 getPost()
-
-Takes 1 args: post_ID
-Returns post struct, hashref.
-
-	 $example_return_value: {
-	                          categories => [
-	                                          'Uncategorized'
-	                                        ],
-	                          dateCreated => '20080130T14:19:05',
-	                          date_created_gmt => '20080130T22:19:05',
-	                          description => 'test description here',
-	                          link => 'http://leocharre.com/articles/test_1201731544/',
-	                          mt_allow_comments => '1',
-	                          mt_allow_pings => '1',
-	                          mt_excerpt => '',
-	                          mt_keywords => '',
-	                          mt_text_more => '',
-	                          permaLink => 'http://leocharre.com/articles/test_1201731544/',
-	                          postid => '119',
-	                          title => 'test_1201731544',
-	                          userid => '2',
-	                          wp_author_display_name => 'leocharre',
-	                          wp_author_id => '2',
-	                          wp_password => '',
-	                          wp_slug => 'test_1201731544'
-	                        }
-
-=head3 getRecentPosts()
-
-Takes 1 args: num_posts (number, optional).
-
-Returns arrayref.
-Each element is hash ref same as getPost() would return.
-
-=head3 getCategories()
-
-Example return value:
-
-	 $return_value: [
-	                  {
-	                    categoryId => '4',
-	                    categoryName => 'art',
-	                    description => 'art',
-	                    htmlUrl => 'http://leocharre.com/articles/category/art/',
-	                    parentId => '0',
-	                    rssUrl => 'http://leocharre.com/articles/category/art/feed/'
-	                  },
-	                  {
-	                    categoryId => '6',
-	                    categoryName => 'cool linux commands',
-	                    description => 'cool linux commands',
-	                    htmlUrl => 'http://leocharre.com/articles/category/cool-linux-commands/',
-	                    parentId => '0',
-	                    rssUrl => 'http://leocharre.com/articles/category/cool-linux-commands/feed/'
-	                  }
-	                ]
-
-=head3 newMediaObject()
-
-Takes 1 args: data (hashref).
-The hashref keys and values are bits (Mime::Base64), type (mime type), and name (filename).
-
-=head3 getTemplate()
-
-Takes 1 args: template.
-
-=head3 setTemplate()
-
-Takes 2 args: content, template.
-
-=head3 getUsersBlogs()
-
-No argument, returns users blogs.
-Example return :
-
-	 $r: [
-	       {
-	         blogName => 'leo charre',
-	         blogid => '1',
-	         isAdmin => '1',
-	         url => 'http://leocharre.com/'
-	       }
-	     ]
-
-=head3 deletePost()
-
-Argument is post id(number).
-Returns boolean.
-
-=head1 WISHLIST
-
-It'd be nice to manage links via xmlrpc.
-
-
-=head1 BUGS
-
-Please submit to AUTHOR
-
-=head1 CAVEATS
-
-This distro is alpha.
-Included are the metaWeblog and wp method calls.
-
-=head1 REQUIREMENTS
-
-L<XMLRPC::Lite>
-
-=head1 SEE ALSO
-
-L<XMLRPC::Lite>
-L<SOAP::Lite>
-WordPress L<http://wordpress.org>
-
-=head1 AUTHOR
-
-Leo Charre leocharre at cpan dot org
-
-=head1 COPYRIGHT
-
-Copyright (c) 2009 Leo Charre. All rights reserved.
-
-=head1 LICENSE
-
-This package is free software; you can redistribute it and/or modify it under the same terms as Perl itself, i.e., under the terms of the "Artistic License" or the "GNU General Public License".
-
-=head1 DISCLAIMER
-
-This package is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-See the "GNU General Public License" for more details.
-   
-=cut
+# lib/WordPress/XMLRPC.pod
