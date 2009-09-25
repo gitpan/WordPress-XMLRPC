@@ -7,7 +7,7 @@ WordPress::XMLRPC - api to wordpress xml rpc calls
 =head1 SYNOPSIS
 
    use WordPress::XMLRPC;
-   
+      
    my $o = WordPress:::XMLRPC->new({
      username => 'author1',
      password => 'superpass',
@@ -67,7 +67,7 @@ Or..
             $self->password,
             $self->proxy,
          );
- 
+
 =head1 METHODS
 
 =head2 xmlrpc_methods()
@@ -318,20 +318,24 @@ The key 'name' must be present or croaks.
 
 Argument is category id, will return struct (hash ref).
 
-   ### $got: {
-   ####         categoryId => 99,
-   ####         categoryName => 'category772',
-   ####         description => 'category772',
-   ####         htmlUrl => 'http://leocharre.com/articles/category/category772/',
-   ####         parentId => '0',
-   ####         rssUrl => 'http://leocharre.com/articles/category/category772/feed/'
-   ####       }
+   $got: {
+           categoryId => 99,
+           categoryName => 'category772',
+           description => 'category772',
+           htmlUrl => 'http://leocharre.com/articles/category/category772/',
+           parentId => '0',
+           rssUrl => 'http://leocharre.com/articles/category/category772/feed/'
+         }
 
-=head4 CAVEAT 
+=over 4
+
+=item CAVEAT 
 
 There seems to be a bug in xmlrpc.php (wordpress v 2.3.2) , that does not fill out 
 the categories properly. You can use  newCategory() to insert a description, bu
 upon getCategory(), the struct description is replaced by the categoryName field.
+
+=back
 
 =head3 suggestCategories()
 
@@ -348,65 +352,65 @@ If you call it as the following..
 
 And you have a 'drawing' category, it returns:
 
-   ### $r: [
-   ###       {
-   ###         category_id => '187',
-   ###         category_name => 'drawing'
-   ###       }
-   ###     ]
+   $r: [
+         {
+           category_id => '187',
+           category_name => 'drawing'
+         }
+       ]
 
 With no arguments, example return:
 
-   ### $r: [
-   ###       {
-   ###         category_id => '4',
-   ###         category_name => 'art'
-   ###       },
-   ###       {
-   ###         category_id => '196',
-   ###         category_name => 'category528'
-   ###       },
-   ###       {
-   ###         category_id => '197',
-   ###         category_name => 'category528 appended'
-   ###       },
-   ###       {
-   ###         category_id => '203',
-   ###         category_name => 'category919 appended'
-   ###       },
-   ###       {
-   ###         category_id => '184',
-   ###         category_name => 'design'
-   ###       },
-   ###       {
-   ###         category_id => '183',
-   ###         category_name => 'dev'
-   ###       },
-   ###       {
-   ###         category_id => '187',
-   ###         category_name => 'drawing'
-   ###       },
-   ###       {
-   ###         category_id => '190',
-   ###         category_name => 'graphic'
-   ###       },
-   ###       {
-   ###         category_id => '5',
-   ###         category_name => 'near life experience'
-   ###       },
-   ###       {
-   ###         category_id => '188',
-   ###         category_name => 'painting'
-   ###       },
-   ###       {
-   ###         category_id => '189',
-   ###         category_name => 'pinup'
-   ###       },
-   ###       {
-   ###         category_id => '186',
-   ###         category_name => 'web'
-   ###       }
-   ###     ]
+   $r: [
+         {
+           category_id => '4',
+           category_name => 'art'
+         },
+         {
+           category_id => '196',
+           category_name => 'category528'
+         },
+         {
+           category_id => '197',
+           category_name => 'category528 appended'
+         },
+         {
+           category_id => '203',
+           category_name => 'category919 appended'
+         },
+         {
+           category_id => '184',
+           category_name => 'design'
+         },
+         {
+           category_id => '183',
+           category_name => 'dev'
+         },
+         {
+           category_id => '187',
+           category_name => 'drawing'
+         },
+         {
+           category_id => '190',
+           category_name => 'graphic'
+         },
+         {
+           category_id => '5',
+           category_name => 'near life experience'
+         },
+         {
+           category_id => '188',
+           category_name => 'painting'
+         },
+         {
+           category_id => '189',
+           category_name => 'pinup'
+         },
+         {
+           category_id => '186',
+           category_name => 'web'
+         }
+       ]
 
 =head3 deleteCategory()
 
@@ -422,16 +426,7 @@ I suppose you could search for categories with the name 'bad' and delete them as
 
 =cut
 
-
-
-
-
-
-
-
-=cut
-
-=head2 getComment()
+=head3 getComment()
 
 Takes 1 args: comment_id (number).
 Returns struct (hashref).
@@ -439,41 +434,41 @@ Returns struct (hashref).
    $o->getComment(2603);
 
 Example return value:
-   ### $r: {
-   ###       author => 'santrex sucks',
-   ###       author_email => 'webmaster@santrexsucks.com',
-   ###       author_ip => '66.165.246.149',
-   ###       author_url => 'http://santrexsucks.com',
-   ###       comment_id => '2603',
-   ###       content => 'santrex is the worst hosting company ive ever used. santrex should be avoided at all costs!',
-   ###       date_created_gmt => '20090617T00:17:54',
-   ###       link => 'http://leocharre.com/articles/its-on-bitch/comment-page-1/#comment-2603',
-   ###       parent => '0',
-   ###       post_id => '372',
-   ###       post_title => 'IT&#8217;S ON BITCH',
-   ###       status => 'approve',
-   ###       type => '',
-   ###       user_id => '0'
-   ###     }
+   $r: {
+         author => 'santrex sucks',
+         author_email => 'webmaster@santrexsucks.com',
+         author_ip => '66.165.246.149',
+         author_url => 'http://santrexsucks.com',
+         comment_id => '2603',
+         content => 'santrex is the worst hosting company ive ever used. santrex should be avoided at all costs!',
+         date_created_gmt => '20090617T00:17:54',
+         link => 'http://leocharre.com/articles/its-on-bitch/comment-page-1/#comment-2603',
+         parent => '0',
+         post_id => '372',
+         post_title => 'IT&#8217;S ON BITCH',
+         status => 'approve',
+         type => '',
+         user_id => '0'
+       }
 
-=head2 getComments()
+=head3 getComments()
 
 Takes 1 args: struct (hashref).
 NOTE: Untested. If you have info on this, send it in.
 
-=head2 deleteComment()
+=head3 deleteComment()
 
 Takes 1 args: comment_id (number).
 Returns bool true or false.
 
    $o->deleteComment(2603);
 
-=head2 editComment()
+=head3 editComment()
 
 Takes 2 args: comment_id (number), content_struct (hashref).
 
 
-=head2 newComment()
+=head3 newComment()
 
 Takes 2 args: post id, content_struct (hashref).
 Returns new comment id (number).
@@ -482,32 +477,20 @@ This will be posted under your login name. The post id is the post the comment i
 
    $o->newComment( 15, { status => 'approve', content => "Hi there, this is a note." } );
 
-=head2 getCommentStatusList()
+=head3 getCommentStatusList()
 
 Takes no argument.
 Returns hashref.
 
 Example return value:
-   ### $r: {
-   ###       approve => 'Approved',
-   ###       hold => 'Unapproved',
-   ###       spam => 'Spam'
-   ###     }
+   $r: {
+         approve => 'Approved',
+         hold => 'Unapproved',
+         spam => 'Spam'
+       }
 
 
-=pod
-
-
-
-
-
-
-
-
-
-=cut
-
-=head2 getOptions()
+=head3 getOptions()
 
 Optional arguments are, a list of option names.
 If you do not pass a list of options assumes all are chosen.
@@ -530,48 +513,48 @@ Possible option names (as of wordpress 2.8.4):
 
 Example return value (with no arguments):
 
-   ### $options: {
-   ###             blog_tagline => {
-   ###                               desc => 'Blog Tagline',
-   ###                               readonly => '0',
-   ###                               value => 'pinup art, perl, unix, developer smorgasbord'
-   ###                             },
-   ###             blog_title => {
-   ###                             desc => 'Blog Title',
-   ###                             readonly => '0',
-   ###                             value => 'leo charre'
-   ###                           },
-   ###             blog_url => {
-   ###                           desc => 'Blog URL',
-   ###                           readonly => '1',
-   ###                           value => 'http://leocharre.com'
-   ###                         },
-   ###             date_format => {
-   ###                              desc => 'Date Format',
-   ###                              readonly => '0',
-   ###                              value => 'F j, Y'
-   ###                            },
-   ###             software_name => {
-   ###                                desc => 'Software Name',
-   ###                                readonly => '1',
-   ###                                value => 'WordPress'
-   ###                              },
-   ###             software_version => {
-   ###                                   desc => 'Software Version',
-   ###                                   readonly => '1',
-   ###                                   value => '2.8.4'
-   ###                                 },
-   ###             time_format => {
-   ###                              desc => 'Time Format',
-   ###                              readonly => '0',
-   ###                              value => 'g:i a'
-   ###                            },
-   ###             time_zone => {
-   ###                            desc => 'Time Zone',
-   ###                            readonly => '0',
-   ###                            value => '-8'
-   ###                          }
-   ###           }
+   $options: {
+               blog_tagline => {
+                                 desc => 'Blog Tagline',
+                                 readonly => '0',
+                                 value => 'pinup art, perl, unix, developer smorgasbord'
+                               },
+               blog_title => {
+                               desc => 'Blog Title',
+                               readonly => '0',
+                               value => 'leo charre'
+                             },
+               blog_url => {
+                             desc => 'Blog URL',
+                             readonly => '1',
+                             value => 'http://leocharre.com'
+                           },
+               date_format => {
+                                desc => 'Date Format',
+                                readonly => '0',
+                                value => 'F j, Y'
+                              },
+               software_name => {
+                                  desc => 'Software Name',
+                                  readonly => '1',
+                                  value => 'WordPress'
+                                },
+               software_version => {
+                                     desc => 'Software Version',
+                                     readonly => '1',
+                                     value => '2.8.4'
+                                   },
+               time_format => {
+                                desc => 'Time Format',
+                                readonly => '0',
+                                value => 'g:i a'
+                              },
+               time_zone => {
+                              desc => 'Time Zone',
+                              readonly => '0',
+                              value => '-8'
+                            }
+             }
 
 
 Example usage:
@@ -580,7 +563,7 @@ Example usage:
    my $options = $o->getOptions;
 
 
-=head2 setOptions()
+=head3 setOptions()
 
 Takes 1 args: options hash ref.
 Returns same as getOptions().
@@ -599,17 +582,16 @@ Example usage:
 
 This would return:
 
-   ### $out: {
-   ###         blog_tagline => {
-   ###                           desc => 'Blog Tagline',
-   ###                           readonly => '0',
-   ###                           value => 'New tagline for this blog, this is the best blog ever', 
-   ###                         }
-   ###       }
+   $out: {
+           blog_tagline => {
+                             desc => 'Blog Tagline',
+                             readonly => '0',
+                             value => 'New tagline for this blog, this is the best blog ever', 
+                           }
+         }
 
 The value taken by setOptions() should be the same as returned by getOptions(). This is more proof
 that php "coders" have no discipline. As if proof were needed. Ok, maybe that's too harsh.
-
 
 =cut
 
@@ -676,17 +658,6 @@ Returns arrayref.
 
 Each element is hash ref same as getPost() would return.
 
-=cut
-
-
-
-
-
-
-
-
-=pod
-
 =head3 uploadFile()
 
 Takes 1 args: data.
@@ -697,44 +668,28 @@ Data is a hashref, see WordPress::MediaObject.
 Takes 1 args: data (hashref).
 The hashref keys and values are bits (Mime::Base64), type (mime type), and name (filename).
 
-=cut
-
-
-
-
-
-
-
-
-=pod
-
 =head3 getTemplate()
 
 Takes 1 args: template name (string).
 NOTE: This fails. Don't know why. If you have any idea, contact AUTHOR.
-
 
 =head3 setTemplate()
 
 Takes 2 args: content, template.
 NOTE: Untested.
 
-=head2 getPageTemplates()
+=head3 getPageTemplates()
 
 Takes no args.
 Returns hashref.
 
 Example return:
 
-   ### return: {
-   ###           Default => 'default',
-   ###           'Link Categories' => 'link_categories.php',
-   ###           Links => 'links.php'
-   ###         }
-
-=cut
-
-=pod
+   return: {
+             Default => 'default',
+             'Link Categories' => 'link_categories.php',
+             Links => 'links.php'
+           }
 
 =head3 getTags()
 
@@ -743,40 +698,33 @@ Returns array ref. Each element is a hashref.
 
 Example return:
 
-   ### return: [
-   ###           {
-   ###             count => '1',
-   ###             html_url => 'http://leocharre.com/articles/tag/avi/',
-   ###             name => 'avi',
-   ###             rss_url => 'http://leocharre.com/articles/tag/avi/feed/',
-   ###             slug => 'avi',
-   ###             tag_id => '158'
-   ###           },
-   ###           {
-   ###             count => '1',
-   ###             html_url => 'http://leocharre.com/articles/tag/bugzilla/',
-   ###             name => 'bugzilla',
-   ###             rss_url => 'http://leocharre.com/articles/tag/bugzilla/feed/',
-   ###             slug => 'bugzilla',
-   ###             tag_id => '195'
-   ###           },
-   ###           {
-   ###             count => '1',
-   ###             html_url => 'http://leocharre.com/articles/tag/callback/',
-   ###             name => 'callback',
-   ###             rss_url => 'http://leocharre.com/articles/tag/callback/feed/',
-   ###             slug => 'callback',
-   ###             tag_id => '30'
-   ###           },
-   ###         ]
-   ###      ... .etc.....
-
-
-=cut
-
-
-
-
+   return: [
+             {
+               count => '1',
+               html_url => 'http://leocharre.com/articles/tag/avi/',
+               name => 'avi',
+               rss_url => 'http://leocharre.com/articles/tag/avi/feed/',
+               slug => 'avi',
+               tag_id => '158'
+             },
+             {
+               count => '1',
+               html_url => 'http://leocharre.com/articles/tag/bugzilla/',
+               name => 'bugzilla',
+               rss_url => 'http://leocharre.com/articles/tag/bugzilla/feed/',
+               slug => 'bugzilla',
+               tag_id => '195'
+             },
+             {
+               count => '1',
+               html_url => 'http://leocharre.com/articles/tag/callback/',
+               name => 'callback',
+               rss_url => 'http://leocharre.com/articles/tag/callback/feed/',
+               slug => 'callback',
+               tag_id => '30'
+             },
+           ]
+        ... .etc.....
 
 =head3 getUsersBlogs()
 
@@ -792,19 +740,10 @@ Example return :
 	       }
 	     ]
 
-=cut
-
-
-
-
-
-
-=pod
-
 =head1 DEBUG
 
 This is useful if you get errors..
-   
+
    $WordPress::XMLRPC::DEBUG = 1;
 
 =head1 WISHLIST

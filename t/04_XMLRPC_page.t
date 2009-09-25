@@ -7,11 +7,7 @@ no strict 'refs';
 
 ok(1,'starting test.');
 
-if( ! -f './t/wppost' ){
-   ok(1, 'see README');
-   exit;
-}
-
+assure_fulltesting();
 
 
 my $w = WordPress::XMLRPC->new(_conf('./t/wppost'));

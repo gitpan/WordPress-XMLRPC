@@ -1,3 +1,16 @@
+2009-09-25 09:55  cvs
+
+	* lib/WordPress/XMLRPC.pm, t/00_basic.t, t/02_XMLRPC.t,
+	  t/04_XMLRPC_page.t, t/04_XMLRPC_post.t, t/10_XMLRPC.t.optional,
+	  t/11_category.t, t/12_categories.t, t/14_options.t,
+	  t/15_templates.t, t/16_tags.t, t/17_comments.t, t/test.pl: Made
+	  sure some tests skip out if ENV FULLTESTING is set to 0- or if
+	  t/wppost is not present.  Fixed bug in test 12.
+
+2009-09-09 14:59  cvs
+
+	* lib/WordPress/XMLRPC.pod: Fixed up documentation formatting.
+
 2009-09-09 11:37  cvs
 
 	* Makefile.PL, README, lib/WordPress/XMLRPC.pm,

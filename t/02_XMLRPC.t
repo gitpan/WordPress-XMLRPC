@@ -7,11 +7,9 @@ no strict 'refs';
 
 ok(1,'starting test.');
 
+assure_fulltesting();
 
-if( ! -f './t/wppost' ){
-   ok(1, 'see README for further testing, skipped.');
-   exit;
-}
+
 
 
 

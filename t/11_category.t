@@ -7,15 +7,15 @@ no strict 'refs';
 use Smart::Comments '###';
 
 ok(1,'starting test.');
+
 my $r;
 
 
 print STDERR " # WordPress has a bug - i think.. it doesn't register new categories properly via rpc\n\n";
 
-if( ! -f './t/wppost' ){
-   ok(1, 'see README for further testing, skipped.');
-   exit;
-}
+
+assure_fulltesting();
+
 
 
 

@@ -3,8 +3,9 @@ use warnings;
 use strict;
 use Carp;
 use LEOCHARRE::Debug;
-use vars qw($VERSION);
-$VERSION = sprintf "%d.%02d", q$Revision: 1.20 $ =~ /(\d+)/g;
+use vars qw($VERSION $DEBUG);
+$VERSION = sprintf "%d.%02d", q$Revision: 1.21 $ =~ /(\d+)/g;
+
 
 sub new {
    my ($class,$self) = @_;

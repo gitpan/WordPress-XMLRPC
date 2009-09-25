@@ -10,10 +10,7 @@ ok(1,'starting test.');
 my $r;
 
 
-if( ! -f './t/wppost' ){
-   ok(1, 'see README for further testing, skipped.');
-   exit;
-}
+assure_fulltesting();
 
 my $w = WordPress::XMLRPC->new(_conf('./t/wppost'));
 $WordPress::XMLRPC::DEBUG = 1;

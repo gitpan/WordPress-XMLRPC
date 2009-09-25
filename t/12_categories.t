@@ -8,12 +8,9 @@ ok(1,'starting test.');
 
 # WordPress has a bug - i think.. it doesn't register new categories properly via rpc
 
+assure_fulltesting();
 
 
-if( ! -f './t/wppost' ){
-   ok(1, 'see README for further testing, skipped.');
-   exit;
-}
 
 
 
@@ -26,10 +23,12 @@ my $w = WordPress::XMLRPC->new(_conf('./t/wppost'));
 my $new_category_name ='category' .( int rand 1000 );
 print STDERR "new category name : $new_category_name\n";
 my $new_category_id;
-ok( $new_category_id = $w->newCategory({
-   name => $new_category_name, 
-   description => ' different description then name..', # not supported, apparently
-   }) ) 
+ok( 
+   $new_category_id = $w->newCategory({
+      name => $new_category_name, 
+      description => ' different description then name..', # not supported, apparently
+   }),
+   'newCategory()' ) 
    or die("failed name => '$new_category_name',  ".$w->errstr );
 
 print STDERR " gets id :  $new_category_id\n\n\n";
@@ -63,28 +62,9 @@ ok( $got,"getCategory( $new_category_id  ) returns.. ");
 
 my $ncn = 'testcat'.( int rand 10000 );
 
-print STDERR "\n\n=======\nnewCategory.. \n";
-my $newCategory = $w->newCategory({ name => $ncn}) 
+print STDERR "\n\n=======\n";
+my $newCategory_id;
+ok( $newCategory_id = $w->newCategory({ name => $ncn}), 'newCategory()') 
    or warn("newCategory no return, " . $w->errstr );
 
-
-### $newCategory
-unless( ok( $newCategory->{categoryName} eq $ncn ) ){
-   my @k = keys %$newCategory;
-   print STDERR "keys: ".scalar @k."\n";
-   for my $k  (@k){
-      my $v = $newCategory->{$k};
-      print STDERR" k:$k, v:$v\n";
-   }
-
- die;
-}
-
-
-
-
-
-
-#my $suggestCategories = $w->suggestCategories;
-#ok($suggestCategories, "suggestCategories()");
-## $suggestCategories
+warn "#returned $newCategory_id";
