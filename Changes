@@ -1,3 +1,10 @@
+2009-10-29 20:58  cvs
+
+	* lib/WordPress/XMLRPC.pm, lib/WordPress/XMLRPC.pod, t/18_media.t,
+	  t/media.jpg: Added test and help to upload media.  Added a help
+	  sub to turn a file on disk to the data struct required (bits,
+	  etc)
+
 2009-09-25 09:55  cvs
 
 	* lib/WordPress/XMLRPC.pm, t/00_basic.t, t/02_XMLRPC.t,

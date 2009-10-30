@@ -4,8 +4,7 @@ use strict;
 use Carp;
 use LEOCHARRE::Debug;
 use vars qw($VERSION $DEBUG);
-$VERSION = sprintf "%d.%02d", q$Revision: 1.21 $ =~ /(\d+)/g;
-
+$VERSION = sprintf "%d.%02d", q$Revision: 1.22 $ =~ /(\d+)/g;
 
 sub new {
    my ($class,$self) = @_;
@@ -115,6 +114,58 @@ sub errstr {
    return $self->{errstr};
 }
 
+
+
+# helper for uploading media..
+
+sub abs_path_to_media_object_data {
+   my $abs_path = shift;
+   
+   -f $abs_path or Carp::cluck("not on disk: $abs_path") and return;
+
+   my $data;
+   
+   $data->{name} = get_file_name($abs_path) or die('cant get filename');
+   $data->{type} = get_mime_type($abs_path) or die("cant get mime type");
+   $data->{bits} = get_file_bits($abs_path) or die('cant get file bits');
+   
+   return $data;
+
+   # optionally we can request other files to get mime on
+   sub get_mime_type {
+      my $abs = shift;
+      $abs or confess('missing arg');   
+      require File::Type;
+      my $ft = new File::Type;
+      my $type = $ft->mime_type($abs) or die('missing mime');
+      return $type;
+   }
+
+   sub get_file_bits {
+      my $abs_path = shift;
+      $abs_path or die;
+      # from http://search.cpan.org/~gaas/MIME-Base64-3.07/Base64.pm
+      require MIME::Base64;
+
+      open(FILE, $abs_path) or die($!);
+      my $bits;
+      my $buffer;
+      while( read(FILE, $buffer, (60*57)) ) {
+         $bits.= $buffer;
+      }
+
+      return $bits;
+   }
+
+   sub get_file_name {
+      my $string = shift;
+      $string or croak('missing path');
+      
+      $string=~s/^.+\/+|\/+$//g;
+      return $string;
+   }
+
+}
 
 
 
@@ -406,19 +457,24 @@ sub suggestCategories {
 	return $result;
 }
 
+
+
+
 # xmlrpc.php: function mw_newMediaObject
-sub uploadFile {
+*uploadFile = \&newMediaObject;
+sub newMediaObject {
 	my $self = shift;
 	my $blog_id = $self->blog_id;
 	my $data = shift;
-	
-	defined $data or confess('missing data hash ref arg');
+
+   defined $data or confess('missing data hash ref arg');
    ref $data eq 'HASH' or croak('arg is not hash ref');
-   
 
 	my $call = $self->server->call(
-		'wp.uploadFile',
+		'metaWeblog.newMediaObject',
 		$blog_id,
+      $self->username,
+      $self->password,
 		$data,
 	);
 
@@ -432,6 +488,8 @@ sub uploadFile {
 
 	return $result;
 }
+
+
 
 # xmlrpc.php: function mw_newPost
 sub newPost {
@@ -605,33 +663,6 @@ sub getCategory {
 
 
 
-# xmlrpc.php: function mw_newMediaObject
-sub newMediaObject {
-	my $self = shift;
-	my $blog_id = $self->blog_id;
-	my $data = shift;
-
-   defined $data or confess('missing data hash ref arg');
-   ref $data eq 'HASH' or croak('arg is not hash ref');
-
-	my $call = $self->server->call(
-		'metaWeblog.newMediaObject',
-		$blog_id,
-      $self->username,
-      $self->password,
-		$data,
-	);
-
-	if ( $self->_call_has_fault($call)){
-		return;
-	}
-
-	my $result = $call->result;
-	defined $result
-		or die('no result');
-
-	return $result;
-}
 
 # xmlrpc.php: function blogger_deletePost
 sub deletePost {

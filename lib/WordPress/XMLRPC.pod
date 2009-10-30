@@ -68,6 +68,13 @@ Or..
             $self->proxy,
          );
 
+Uploading a file..
+
+   my $data = WordPress:::XMLRPC::abs_path_to_media_object_data('./file.jpg');
+   my $r = $o->newMediaObject($data);
+   print $r->{url};
+  
+
 =head1 METHODS
 
 =head2 xmlrpc_methods()
@@ -658,15 +665,20 @@ Returns arrayref.
 
 Each element is hash ref same as getPost() would return.
 
-=head3 uploadFile()
-
-Takes 1 args: data.
-Data is a hashref, see WordPress::MediaObject.
-
-=head3 newMediaObject()
+=head3 newMediaObject() uploadFile()
 
 Takes 1 args: data (hashref).
 The hashref keys and values are bits (Mime::Base64), type (mime type), and name (filename).
+See abs_path_to_media_object_data().
+Returns result:
+
+   ### $r: {
+   ###       file => 'media.jpg',
+   ###       type => 'image/jpeg',
+   ###       url => 'http://leocharre.com/wp-content/uploads/media3.jpg'
+   ###     }
+
+Would be truly useful if it returned id!
 
 =head3 getTemplate()
 
