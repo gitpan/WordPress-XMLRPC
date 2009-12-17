@@ -1,3 +1,15 @@
+2009-12-17 12:33  cvs
+
+	* lib/WordPress/XMLRPC.pm, lib/WordPress/XMLRPC.pod,
+	  t/04_XMLRPC_page.t: There was an error with the
+	  code/documentation for editPage() Now editPage() will take
+	  content hashref as first arg, and publish boolean as second
+	  optional arg- OR it will take page id, content hashref, and
+	  optional 'publish boolean' arg.
+
+	  From Alan Haggai Alavi "..Error with editPage(). It accepts three
+	  arguments instead of two.  The attached patch seems to.." Thanks!
+
 2009-10-29 20:58  cvs
 
 	* lib/WordPress/XMLRPC.pm, lib/WordPress/XMLRPC.pod, t/18_media.t,

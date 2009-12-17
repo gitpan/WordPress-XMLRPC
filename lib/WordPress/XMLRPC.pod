@@ -205,20 +205,34 @@ Returns boolean (true or false).
 
 =head3 editPage()
 
-Takes 2 args: page (hashref), publish(boolean).
-The page hashref is just as discussed in getPage().
+First, required argument- is content struct page hashref.
+Second, optional argument- is publish boolean.
+(The page hashref is just as discussed in getPage().)
 
 You could use getPage(), edit the returned hashref, and resubmit with editPage().
 
    my $page_hashref = $o->getPage(5);
+   
    $page_hashref->{title} = 'This is the New Title';
-
-   $o->editPage($page_hashref) or die( $o->errstr );
+   
+   $o->editPage( $page_hashref ) 
+      or die( $o->errstr );
 
 Obviously the page id is in the page data (hashref), this is there inherently when you
 call getPage().
 
 The same would be done with the posts.
+
+=head4 Deprecating usage of:
+
+Optional first argument is page id number.
+Optional usage for same example above:
+   
+   $o->editPage( 5, { title => 'new title' } ) 
+      or die( $o->errstr );
+
+Page id must be present as first argument, or as key/value pair in content hashref.
+If the content hashref is what you got with getPage() for example, the page id is already present.
 
 =head3 getPageList()
 
@@ -784,6 +798,12 @@ WordPress L<http://wordpress.org>
 =head1 AUTHOR
 
 Leo Charre leocharre at cpan dot org
+
+=head2 THANKS
+
+People who contributed code, criticism, patches, suggestions;
+
+Alan Haggai Alavi
 
 =head1 LICENSE
 

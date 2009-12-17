@@ -4,7 +4,7 @@ use strict;
 use Carp;
 use LEOCHARRE::Debug;
 use vars qw($VERSION $DEBUG);
-$VERSION = sprintf "%d.%02d", q$Revision: 1.22 $ =~ /(\d+)/g;
+$VERSION = sprintf "%d.%02d", q$Revision: 1.23 $ =~ /(\d+)/g;
 
 sub new {
    my ($class,$self) = @_;
@@ -298,23 +298,51 @@ sub deletePage {
 
 # xmlrpc.php: function wp_editPage
 sub editPage {
-	my $self       = shift;
-	my $blog_id    = $self->blog_id;
-   my $page_id    = shift;
-	my $content    = shift;
-	my $publish    = shift;
+	my $self    = shift;
+   my($blog_id, $page_id, $content, $publish);
+	$blog_id    = $self->blog_id;
+  
+   # the following hack is a workaround for getting args as one of:
+   # $id, $content, $publish
+   # $content, $publish
+   # $content
+   # $id, $content
+
+   # i know.. this is a very ugly hack   
+   my $_arg_1 = shift;
+   if ($_arg_1=~/^\d+$/){
+      $page_id=$_arg_1;
+      $content = shift;
+      $publish = shift;
+
+	   (defined $content and ( ref $content ) and ( ref $content eq 'HASH' ))
+         or confess('content arg is not hash ref');
+   }
+
+   else {
+      $content = $_arg_1;      
+      $publish = shift;
+      ( defined $content and (ref $content) and (ref $content eq 'HASH'))
+         or confess('content arg is not hash ref');
+
+      $page_id = $content->{page_id}
+         or confess("missing page_id in content hashref");
+   }
+
+   
+
    my $password   = $self->password;
    my $username   = $self->username;
 
-	defined $page_id or confess('missing page id arg');
-	defined $content or confess('missing content hash ref arg');
-   ref $content eq 'HASH' or croak('arg is not hash ref');
+
+   ( defined $page_id and $page_id=~/^\d+$/ )
+      or confess('missing page id arg');
+
    
 	unless (defined $publish) {
 		$publish = $self->publish;
 	}
    
-
 
 	my $call = $self->server->call(
 		'wp.editPage',

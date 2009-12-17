@@ -39,7 +39,13 @@ ok($newPage, "new page returns id $newPage") or die;
 my $editPage = $w->editPage($newPage, 
    { title => 'test_test_1', description => 'bogus content edited' });
 ### $editPage
-ok( $editPage,'editPage succeeds');
+ok( $editPage,'editPage() succeeds in context( page_id, content_href)');
+
+my $editPage_2 = $w->editPage(
+   { title => 'test_test_4', description => 'bogus content edited', page_id => $newPage });
+### $editPage_2
+ok( $editPage_2,'editPage() succeeds in context( content_href )');
+
 
 
 my $getPage = $w->getPage($newPage) or die("error string: ".$w->errstr);
